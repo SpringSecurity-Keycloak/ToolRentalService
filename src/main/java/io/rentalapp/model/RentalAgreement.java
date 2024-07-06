@@ -2,9 +2,15 @@ package io.rentalapp.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.rentalapp.common.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+
+import javax.persistence.Entity;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
@@ -14,10 +20,10 @@ import javax.validation.constraints.*;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
 
-
-public class RentalAgreement   {
-  @JsonProperty("id")
-  private String id = null;
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+public class RentalAgreement  extends BaseEntity {
 
   @JsonProperty("tool_code")
   private String toolCode = null;
@@ -52,25 +58,6 @@ public class RentalAgreement   {
   @JsonProperty("final_charge")
   private BigDecimal finalCharge = null;
 
-  public RentalAgreement id(String id) {
-    this.id = id;
-    return this;
-  }
-
-  /**
-   * Get id
-   * @return id
-   **/
-  @Schema(description = "")
-      @NotNull
-
-    public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
 
   public RentalAgreement toolCode(String toolCode) {
     this.toolCode = toolCode;
@@ -82,12 +69,10 @@ public class RentalAgreement   {
    * @return toolCode
    **/
   @Schema(description = "")
-      @NotNull
-
-    public String getToolCode() {
+  @NotNull
+  public String getToolCode() {
     return toolCode;
   }
-
   public void setToolCode(String toolCode) {
     this.toolCode = toolCode;
   }
@@ -102,9 +87,7 @@ public class RentalAgreement   {
    * @return toolType
    **/
   @Schema(description = "")
-      @NotNull
-
-    public String getToolType() {
+  public String getToolType() {
     return toolType;
   }
 
@@ -122,12 +105,9 @@ public class RentalAgreement   {
    * @return toolBrand
    **/
   @Schema(description = "")
-      @NotNull
-
-    public String getToolBrand() {
+  public String getToolBrand() {
     return toolBrand;
   }
-
   public void setToolBrand(String toolBrand) {
     this.toolBrand = toolBrand;
   }
@@ -142,12 +122,9 @@ public class RentalAgreement   {
    * @return rentalDays
    **/
   @Schema(description = "")
-      @NotNull
-
-    public String getRentalDays() {
+  public String getRentalDays() {
     return rentalDays;
   }
-
   public void setRentalDays(String rentalDays) {
     this.rentalDays = rentalDays;
   }
@@ -162,12 +139,10 @@ public class RentalAgreement   {
    * @return checkoutDate
    **/
   @Schema(description = "")
-      @NotNull
-
-    public String getCheckoutDate() {
+  @NotNull
+  public String getCheckoutDate() {
     return checkoutDate;
   }
-
   public void setCheckoutDate(String checkoutDate) {
     this.checkoutDate = checkoutDate;
   }
@@ -182,12 +157,9 @@ public class RentalAgreement   {
    * @return dueDate
    **/
   @Schema(description = "")
-      @NotNull
-
-    public String getDueDate() {
+  public String getDueDate() {
     return dueDate;
   }
-
   public void setDueDate(String dueDate) {
     this.dueDate = dueDate;
   }
@@ -202,10 +174,8 @@ public class RentalAgreement   {
    * @return dailyCharge
    **/
   @Schema(description = "")
-      @NotNull
-
-    @Valid
-    public BigDecimal getDailyCharge() {
+  @Valid
+  public BigDecimal getDailyCharge() {
     return dailyCharge;
   }
 
@@ -223,13 +193,10 @@ public class RentalAgreement   {
    * @return chargeDays
    **/
   @Schema(description = "")
-      @NotNull
-
-    @Valid
-    public BigDecimal getChargeDays() {
+  @Valid
+  public BigDecimal getChargeDays() {
     return chargeDays;
   }
-
   public void setChargeDays(BigDecimal chargeDays) {
     this.chargeDays = chargeDays;
   }
@@ -244,13 +211,10 @@ public class RentalAgreement   {
    * @return preDiscountCharge
    **/
   @Schema(description = "")
-      @NotNull
-
-    @Valid
-    public BigDecimal getPreDiscountCharge() {
+  @Valid
+  public BigDecimal getPreDiscountCharge() {
     return preDiscountCharge;
   }
-
   public void setPreDiscountCharge(BigDecimal preDiscountCharge) {
     this.preDiscountCharge = preDiscountCharge;
   }
@@ -265,13 +229,10 @@ public class RentalAgreement   {
    * @return discountPercent
    **/
   @Schema(description = "")
-      @NotNull
-
-    @Valid
-    public BigDecimal getDiscountPercent() {
+  @Valid
+  public BigDecimal getDiscountPercent() {
     return discountPercent;
   }
-
   public void setDiscountPercent(BigDecimal discountPercent) {
     this.discountPercent = discountPercent;
   }
@@ -286,13 +247,10 @@ public class RentalAgreement   {
    * @return finalCharge
    **/
   @Schema(description = "")
-      @NotNull
-
-    @Valid
-    public BigDecimal getFinalCharge() {
+  @Valid
+  public BigDecimal getFinalCharge() {
     return finalCharge;
   }
-
   public void setFinalCharge(BigDecimal finalCharge) {
     this.finalCharge = finalCharge;
   }

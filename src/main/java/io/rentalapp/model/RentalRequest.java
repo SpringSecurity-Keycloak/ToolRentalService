@@ -2,9 +2,13 @@ package io.rentalapp.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.rentalapp.common.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import javax.persistence.Entity;
 import javax.validation.constraints.*;
 
 /**
@@ -13,8 +17,11 @@ import javax.validation.constraints.*;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
 
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+public class RentalRequest   extends BaseEntity {
 
-public class RentalRequest   {
   @JsonProperty("tool_code")
   private String toolCode = null;
 

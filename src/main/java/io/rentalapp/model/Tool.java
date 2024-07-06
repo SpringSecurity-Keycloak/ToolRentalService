@@ -2,7 +2,11 @@ package io.rentalapp.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.rentalapp.common.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
@@ -16,15 +20,11 @@ import javax.validation.constraints.*;
  */
 @Schema(description = "Tools available for rent")
 @Validated
-@Entity
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
-
-
-public class Tool   {
-
-  @Id
-  @GeneratedValue(strategy=GenerationType.AUTO)
-  private Long id;
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+public class Tool  extends BaseEntity {
 
   @JsonProperty("code")
   private String code = null;
@@ -35,6 +35,7 @@ public class Tool   {
   @JsonProperty("brand")
   private String brand = null;
 
+  /*
   public Tool() {
 
   }
@@ -44,6 +45,8 @@ public class Tool   {
     this.type = type;
     this.brand = brand;
   }
+  */
+
 
   /**
    * Unique identifier for a tool instance

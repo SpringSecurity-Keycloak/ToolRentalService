@@ -39,6 +39,9 @@ public class AbstractController implements ApiApi {
     @Autowired
     ToolRepository repository;
 
+    @Autowired
+    RentalAgreementService rentalAgreementService;
+
     @org.springframework.beans.factory.annotation.Autowired
     public AbstractController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
@@ -101,8 +104,10 @@ public class AbstractController implements ApiApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<RentalAgreement>(objectMapper.readValue("{\n  \"rental_days\" : \"rental_days\",\n  \"charge_days\" : 6.027456183070403,\n  \"pre_discount_charge\" : 1.4658129805029452,\n  \"tool_type\" : \"tool_type\",\n  \"daily_charge\" : 0.8008281904610115,\n  \"due_date\" : \"due_date\",\n  \"tool_code\" : \"tool_code\",\n  \"final_charge\" : 5.637376656633329,\n  \"id\" : \"id\",\n  \"discount_percent\" : 5.962133916683182,\n  \"tool_brand\" : \"tool_brand\",\n  \"checkout_date\" : \"checkout_date\"\n}", RentalAgreement.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
+                RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(body);
+                ResponseEntity<RentalAgreement> response = ResponseEntity.ok(rentalAgreement);
+                return response;
+            } catch (Exception e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<RentalAgreement>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
