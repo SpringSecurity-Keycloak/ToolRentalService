@@ -20,7 +20,6 @@ import javax.validation.constraints.*;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 public class RentalAgreement  extends BaseEntity {

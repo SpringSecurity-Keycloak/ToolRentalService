@@ -1,6 +1,6 @@
 package io.rentalapp.persist;
 
-import io.rentalapp.model.RentalRequest;
+import io.rentalapp.persist.model.RentalRequest;
 
 import org.springframework.data.repository.CrudRepository;
 

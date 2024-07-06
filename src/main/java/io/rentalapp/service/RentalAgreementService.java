@@ -1,13 +1,16 @@
-package io.rentalapp.persist;
+package io.rentalapp.service;
 
 import io.rentalapp.model.RentalAgreement;
 import io.rentalapp.model.RentalRequest;
+import io.rentalapp.persist.RentalAgreementRepository;
+import io.rentalapp.persist.RentalRequestRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Service
 public class RentalAgreementService {
@@ -24,14 +27,21 @@ public class RentalAgreementService {
      * @param rentalRequest
      * @return
      */
-    public RentalAgreement createRentalAgreement(RentalRequest rentalRequest) {
-        rentalRequest = rentalRequestRepository.save(rentalRequest);
+    public io.rentalapp.persist.model.RentalAgreement createRentalAgreement(RentalRequest rentalRequest) {
 
-        RentalAgreement rentalAgreement = new RentalAgreement();
-        rentalAgreement.toolCode(rentalRequest.getToolCode());
-        rentalAgreement.checkoutDate("12-12-2023");
-        rentalAgreement.discountPercent(BigDecimal.valueOf(10));
+        io.rentalapp.persist.model.RentalRequest rentRequest = rentalRequestRepository
+                .save(io.rentalapp.persist.model.RentalRequest.builder()
+                        .toolCode(rentalRequest.getToolCode())
+                        .rentailDaysCount(rentalRequest.getRentailDaysCount())
+                        .discountPercent(rentalRequest.getDiscountPercent())
+                        .checkoutDate(new Date())
+                        .build());
 
+        io.rentalapp.persist.model.RentalAgreement rentalAgreement =  io.rentalapp.persist.model.RentalAgreement.builder()
+                .toolCode(rentalRequest.getToolCode())
+                .checkoutDate(new Date())
+                .discountPercent(BigDecimal.valueOf(10))
+                .build();
 
         rentalAgreement = rentalAgreementRepository.save(rentalAgreement);
 

@@ -7,6 +7,7 @@ import io.rentalapp.model.RentalRequest;
 import io.rentalapp.model.Tool;
 import io.rentalapp.model.ToolPricingDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.rentalapp.service.RentalAgreementService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -104,7 +105,12 @@ public class AbstractController implements ApiApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(body);
+                io.rentalapp.persist.model.RentalAgreement newAgreement  = rentalAgreementService.createRentalAgreement(body);
+
+                RentalAgreement rentalAgreement = new RentalAgreement();
+                rentalAgreement.setToolCode(newAgreement.getToolCode());
+                rentalAgreement.setCheckoutDate(newAgreement.getCheckoutDate().toString());
+
                 ResponseEntity<RentalAgreement> response = ResponseEntity.ok(rentalAgreement);
                 return response;
             } catch (Exception e) {
