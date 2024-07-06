@@ -1,6 +1,5 @@
 package io.rentalapp.persist.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.rentalapp.common.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +14,7 @@ import java.util.Date;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class RentalRequest extends BaseEntity {
+public class RentalRequestDTO extends BaseEntity {
 
     private String toolCode = null;
 

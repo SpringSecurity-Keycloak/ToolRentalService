@@ -1,4 +1,4 @@
-package io.rentalapp.persist;
+package io.rentalapp.controller;
 
 import io.rentalapp.api.ApiApi;
 import io.rentalapp.model.Inventory;
@@ -7,6 +7,8 @@ import io.rentalapp.model.RentalRequest;
 import io.rentalapp.model.Tool;
 import io.rentalapp.model.ToolPricingDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.rentalapp.persist.ToolRepository;
+import io.rentalapp.persist.model.RentalAgreementDTO;
 import io.rentalapp.service.RentalAgreementService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -27,6 +29,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * The REST Controller that implements the OpenApi operations
+ */
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
 @RestController
 public class AbstractController implements ApiApi {
@@ -43,12 +48,21 @@ public class AbstractController implements ApiApi {
     @Autowired
     RentalAgreementService rentalAgreementService;
 
+    /**
+     *
+     * @param objectMapper
+     * @param request
+     */
     @org.springframework.beans.factory.annotation.Autowired
     public AbstractController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
+    /**
+     * Fetches all availble tools for rentals
+     * @return List of tools available to rent
+     */
     public ResponseEntity<List<Tool>> getApiV1Tool() {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
@@ -69,6 +83,11 @@ public class AbstractController implements ApiApi {
         return new ResponseEntity<List<Tool>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    /**
+     * Gets pricing details by tool code
+     * @param code The tool code
+     * @return The pricing details for the given tool
+     */
     public ResponseEntity<ToolPricingDetails> getApiV1ToolCode(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("code") String code
     ) {
         String accept = request.getHeader("Accept");
@@ -84,6 +103,11 @@ public class AbstractController implements ApiApi {
         return new ResponseEntity<ToolPricingDetails>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    /**
+     * Get the inventory per tool.
+     * @param code
+     * @return
+     */
     public ResponseEntity<Inventory> getApiV1ToolInventory(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("code") String code
     ) {
         String accept = request.getHeader("Accept");
@@ -99,13 +123,19 @@ public class AbstractController implements ApiApi {
         return new ResponseEntity<Inventory>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    /**
+     * Checks out a tool for rental and creates a new rental agreement
+     * @param code the codeof the tool to check out
+     * @param body The rental request details
+     * @return the rental agreement
+     */
     public ResponseEntity<RentalAgreement> postApiV1ToolCodeCheckout(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("code") String code
             , @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody RentalRequest body
     ) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                io.rentalapp.persist.model.RentalAgreement newAgreement  = rentalAgreementService.createRentalAgreement(body);
+                RentalAgreementDTO newAgreement  = rentalAgreementService.createRentalAgreement(body);
 
                 RentalAgreement rentalAgreement = new RentalAgreement();
                 rentalAgreement.setToolCode(newAgreement.getToolCode());

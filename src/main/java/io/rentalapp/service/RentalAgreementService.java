@@ -1,9 +1,10 @@
 package io.rentalapp.service;
 
-import io.rentalapp.model.RentalAgreement;
 import io.rentalapp.model.RentalRequest;
 import io.rentalapp.persist.RentalAgreementRepository;
 import io.rentalapp.persist.RentalRequestRepository;
+import io.rentalapp.persist.model.RentalAgreementDTO;
+import io.rentalapp.persist.model.RentalRequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,23 +28,23 @@ public class RentalAgreementService {
      * @param rentalRequest
      * @return
      */
-    public io.rentalapp.persist.model.RentalAgreement createRentalAgreement(RentalRequest rentalRequest) {
+    public RentalAgreementDTO createRentalAgreement(RentalRequest rentalRequest) {
 
-        io.rentalapp.persist.model.RentalRequest rentRequest = rentalRequestRepository
-                .save(io.rentalapp.persist.model.RentalRequest.builder()
+        RentalRequestDTO rentRequest = rentalRequestRepository
+                .save(RentalRequestDTO.builder()
                         .toolCode(rentalRequest.getToolCode())
                         .rentailDaysCount(rentalRequest.getRentailDaysCount())
                         .discountPercent(rentalRequest.getDiscountPercent())
                         .checkoutDate(new Date())
                         .build());
 
-        io.rentalapp.persist.model.RentalAgreement rentalAgreement =  io.rentalapp.persist.model.RentalAgreement.builder()
+        RentalAgreementDTO rentalAgreementDTO =  RentalAgreementDTO.builder()
                 .toolCode(rentalRequest.getToolCode())
                 .checkoutDate(new Date())
                 .discountPercent(BigDecimal.valueOf(10))
                 .build();
 
-        rentalAgreement = rentalAgreementRepository.save(rentalAgreement);
+        rentalAgreementDTO = rentalAgreementRepository.save(rentalAgreementDTO);
 
         // fetch all rental requests
         log.info("All Rental Requests found with findAll():");
@@ -61,7 +62,7 @@ public class RentalAgreementService {
         });
         log.info("");
 
-        return rentalAgreement;
+        return rentalAgreementDTO;
     }
 
 }
