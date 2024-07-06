@@ -1,0 +1,369 @@
+openapi: 3.0.0
+x-stoplight:
+  id: jh2fi0ooim01s
+info:
+  title: ToolRentalApi
+  version: '1.0'
+  description: An API to facilitate the rentai of tools
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /api/v1/tool:
+    get:
+      summary: Get tools available for rent
+      tags:
+        - Tool
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tool'
+                  x-stoplight:
+                    id: mdcte0sv8ruxf
+              examples:
+                Example 1:
+                  value:
+                    - code: CHNS
+                      type: Chainsaw
+                      brand: Stihl
+                    - code: LADW
+                      type: Ladder
+                      brand: Werner
+                    - code: JAKD
+                      type: Jackhammer
+                      brand: DeWalt
+                    - code: JAKR
+                      type: Jackhammer
+                      brand: Ridgid
+      operationId: get-api-v1-tool
+      x-stoplight:
+        id: l9v0ef9oqn7h0
+  '/api/v1/tool/{code}':
+    parameters:
+      - schema:
+          type: string
+        name: code
+        in: path
+        required: true
+    get:
+      summary: Get pricing details
+      tags:
+        - Tool
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolPricingDetails'
+              examples:
+                Example 1:
+                  value:
+                    code: CHNS
+                    daily_charge: 1.99
+                    weekend_charge: true
+                    holiday_charge: true
+      operationId: get-api-v1-tool-code
+      x-stoplight:
+        id: mwqsr25nhxji1
+  '/api/v1/tool/{code}/inventory':
+    parameters:
+      - schema:
+          type: string
+        name: code
+        in: path
+        required: true
+    get:
+      summary: Get Inventory details
+      tags:
+        - Tool
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Inventory'
+              examples:
+                Example 1:
+                  value:
+                    tool_code: CHNS
+                    max_available: 0
+                    current_count: 0
+      operationId: get-api-v1-tool-inventory
+      x-stoplight:
+        id: i170f7tr0np5c
+  '/api/v1/tool/{code}/checkout':
+    parameters:
+      - schema:
+          type: string
+        name: code
+        in: path
+        required: true
+    post:
+      summary: Create a rental agreement
+      tags:
+        - Tool
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentalAgreement'
+              examples:
+                Example 1:
+                  value:
+                    id: '123'
+                    tool_code: CHNS
+                    tool_type: Chainsaw
+                    tool_brand: Stihl
+                    rental_days: '10'
+                    checkout_date: string
+                    due_date: string
+                    daily_charge: 0
+                    charge_days: 0
+                    pre_discount_charge: 0
+                    discount_percent: 0
+                    final_charge: 0
+      operationId: post-api-v1-tool-code-checkout
+      x-stoplight:
+        id: c3jvgiu5erzds
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RentalRequest'
+            examples:
+              Example 1:
+                value:
+                  tool_code: CHNS
+                  rentail_days_count: 0
+                  discount_percent: 0
+                  checkout_date: 12-12-2023
+components:
+  schemas:
+    Tool:
+      title: Tool
+      x-stoplight:
+        id: bqdsqpaxveaq7
+      type: object
+      description: Tools available for rent
+      required:
+        - code
+        - type
+        - brand
+      properties:
+        code:
+          type: string
+          x-stoplight:
+            id: q1qr4hcixci9a
+          description: Unique identifier for a tool instance
+        type:
+          type: string
+          x-stoplight:
+            id: htt7fb18o0tst
+          description: The type of tool.
+        brand:
+          type: string
+          x-stoplight:
+            id: x6s09rsmzpv2k
+      x-examples:
+        Example 1:
+          code: CHNS
+          type: Chainsaw
+          brand: Stihl
+    ToolPricingDetails:
+      title: Tool Pricing Details
+      x-stoplight:
+        id: sjehtbf6yxoz5
+      type: object
+      description: Rental price details about each tool available for rent
+      required:
+        - code
+        - daily_charge
+        - weekend_charge
+        - holiday_charge
+      properties:
+        code:
+          type: string
+          description: Unique identifier for a tool instance
+        daily_charge:
+          type: number
+          x-stoplight:
+            id: 01sb1eyz1r1jg
+          description: Daily Charge of the tool
+        weekend_charge:
+          type: boolean
+          description: Is the tool chargable on weekends?
+        holiday_charge:
+          type: boolean
+          description: Is the tool chargeable on observed holidays?
+      x-examples:
+        Example 1:
+          code: CHNS
+          daily_charge: 1.99
+          weekend_charge: true
+          holiday_charge: true
+    Holiday:
+      title: Holiday
+      x-stoplight:
+        id: ikqk0xv035cuh
+      type: object
+      x-examples:
+        Example 1:
+          id: '123'
+          date: 07-04
+          description: July 4th - Independence Day
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: d109h1t8xlu6z
+        date:
+          type: string
+          x-stoplight:
+            id: obplvxqehsu7q
+          format: date
+        description:
+          type: string
+          x-stoplight:
+            id: 0bzrw00ke2td5
+    Inventory:
+      title: Inventory
+      x-stoplight:
+        id: guaovfz9of9ci
+      type: object
+      properties:
+        tool_code:
+          type: string
+          x-stoplight:
+            id: b3nztjm8jigks
+        max_available:
+          type: number
+          x-stoplight:
+            id: 7730a4gnb4l1j
+        current_count:
+          type: number
+          x-stoplight:
+            id: 2ra0h4za5fts9
+      x-examples:
+        Example 1:
+          tool_code: CHNS
+          max_available: 0
+          current_count: 0
+    RentalAgreement:
+      title: RentalAgreement
+      x-stoplight:
+        id: fiifgz2cec8om
+      type: object
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: v7rua7qwsrga8
+        tool_code:
+          type: string
+          x-stoplight:
+            id: d85u69jpc032t
+        tool_type:
+          type: string
+          x-stoplight:
+            id: l05dkqj3u56pe
+        tool_brand:
+          type: string
+          x-stoplight:
+            id: brh3qucsvgico
+        rental_days:
+          type: string
+          x-stoplight:
+            id: wcla9hg1cjdlx
+        checkout_date:
+          type: string
+          x-stoplight:
+            id: yg8to6oe28f7x
+        due_date:
+          type: string
+          x-stoplight:
+            id: mu8ztw93nxmx2
+        daily_charge:
+          type: number
+          x-stoplight:
+            id: 9r1uyrk3pd873
+        charge_days:
+          type: number
+          x-stoplight:
+            id: ny5fwyd4of56b
+        pre_discount_charge:
+          type: number
+          x-stoplight:
+            id: q54cqsc0xw2pi
+        discount_percent:
+          type: number
+          x-stoplight:
+            id: lxmiqclfp5n10
+        final_charge:
+          type: number
+          x-stoplight:
+            id: joekql9vutymd
+      x-examples:
+        Example 1:
+          id: '123'
+          tool_code: CHNS
+          tool_type: Chainsaw
+          tool_brand: Stihl
+          rental_days: '10'
+          checkout_date: string
+          due_date: string
+          daily_charge: 0
+          charge_days: 0
+          pre_discount_charge: 0
+          discount_percent: 0
+          final_charge: 0
+    RentalRequest:
+      title: RentalRequest
+      x-stoplight:
+        id: so15cfg8l22h4
+      type: object
+      required:
+        - tool_code
+        - rentail_days_count
+        - checkout_date
+      properties:
+        tool_code:
+          x-stoplight:
+            id: qqgoufcg6do08
+          enum:
+            - CHNS
+            - LADW
+            - JAKD
+            - JAKR
+          readOnly: true
+        rentail_days_count:
+          type: integer
+          x-stoplight:
+            id: zj2n5prueq6n5
+        discount_percent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          x-stoplight:
+            id: m9edgdd4wqk93
+        checkout_date:
+          type: string
+          format: date
+          x-stoplight:
+            id: qinxih9v8mbpy
+          example: 12-12-2023
+      x-examples:
+        Example 1:
+          tool_code: CHNS
+          rentail_days_count: 0
+          discount_percent: 0
+          checkout_date: 12-12-2023
+tags:
+  - name: Tool
