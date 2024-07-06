@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DateRangeDetails {
-    Long totalWeekDays;
-    Long totalWeekendDays;
-    Long totalHolidays;
+    Long totalWeekDays = Long.valueOf(0);
+    Long totalWeekendDays  = Long.valueOf(0);
+    Long totalHolidays = Long.valueOf(0);
 }
