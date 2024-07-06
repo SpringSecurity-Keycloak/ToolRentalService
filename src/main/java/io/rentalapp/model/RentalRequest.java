@@ -1,19 +1,17 @@
-package io.swagger.model;
+package io.rentalapp.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.util.Objects;
+import javax.validation.constraints.*;
 
 /**
  * RentalRequest
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T12:46:17.388586925Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
 
 
 public class RentalRequest   {
@@ -100,8 +98,8 @@ public class RentalRequest   {
    * Get checkoutDate
    * @return checkoutDate
    **/
-  @Schema(required = true, description = "",format = "date")
-  @NotNull
+  @Schema(required = true, description = "")
+      @NotNull
 
     public String getCheckoutDate() {
     return checkoutDate;

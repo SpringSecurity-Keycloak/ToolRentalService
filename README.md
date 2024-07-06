@@ -23,7 +23,7 @@ Start your server as an simple java application  using the below command
 mvn spring-boot:run
 `
 
-You can view the api documentation in swagger-ui by pointing to  
+You can view the Openapi UI documentation in swagger-ui by pointing to  
 http://localhost:3000/  
 
 Change default port value in application.properties

@@ -1,11 +1,14 @@
-package io.swagger.model;
+package io.rentalapp.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.*;
 
 /**
@@ -13,10 +16,16 @@ import javax.validation.constraints.*;
  */
 @Schema(description = "Tools available for rent")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T12:46:17.388586925Z[GMT]")
+@Entity
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
 
 
 public class Tool   {
+
+  @Id
+  @GeneratedValue(strategy=GenerationType.AUTO)
+  private Long id;
+
   @JsonProperty("code")
   private String code = null;
 
@@ -26,9 +35,14 @@ public class Tool   {
   @JsonProperty("brand")
   private String brand = null;
 
-  public Tool code(String code) {
+  public Tool() {
+
+  }
+
+  public Tool(String code,String type, String brand) {
     this.code = code;
-    return this;
+    this.type = type;
+    this.brand = brand;
   }
 
   /**
