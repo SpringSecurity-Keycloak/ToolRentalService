@@ -42,6 +42,7 @@ public class RentalAgreementService {
                 .toolCode(rentalRequest.getToolCode())
                 .checkoutDate(new Date())
                 .discountPercent(BigDecimal.valueOf(10))
+                .rentalRequest(rentRequest)
                 .build();
 
         rentalAgreementDTO = rentalAgreementRepository.save(rentalAgreementDTO);
@@ -57,8 +58,8 @@ public class RentalAgreementService {
         // fetch all rental agreements
         log.info("All Rental Agreements found with findAll():");
         log.info("-------------------------------");
-        rentalAgreementRepository.findAll().forEach(tool -> {
-            log.info(tool.toString());
+        rentalAgreementRepository.findAll().forEach(agreement -> {
+            log.info("Tool Code in agreement " + agreement.getRentalRequest().getToolCode());
         });
         log.info("");
 

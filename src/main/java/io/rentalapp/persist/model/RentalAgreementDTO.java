@@ -12,9 +12,10 @@ import java.util.Date;
 
 @Data
 @Builder
-@Entity
+@Entity(name = "RentalAgreement")
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "RentalAgreement", uniqueConstraints = {@UniqueConstraint(columnNames = {"rentalRequestId"})})
 public class RentalAgreementDTO extends BaseEntity {
 
         private String toolCode = null;
@@ -38,5 +39,9 @@ public class RentalAgreementDTO extends BaseEntity {
         private BigDecimal discountPercent = null;
 
         private BigDecimal finalCharge = null;
+
+        @OneToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "rentalRequest.id")
+        private RentalRequestDTO rentalRequest = null;
 
 }

@@ -11,9 +11,10 @@ import java.util.Date;
 
 @Data
 @Builder
-@Entity
+@Entity(name = "RentalRequest")
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "RentalRequest", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
 public class RentalRequestDTO extends BaseEntity {
 
     private String toolCode = null;
@@ -23,5 +24,9 @@ public class RentalRequestDTO extends BaseEntity {
     private Integer discountPercent = null;
 
     private Date checkoutDate = null;
+
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = false)
+    private RentalAgreementDTO rentalAgreement = null;
+
 
 }
