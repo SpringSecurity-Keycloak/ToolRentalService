@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Service
@@ -28,15 +30,20 @@ public class RentalAgreementService {
      * @param rentalRequest
      * @return
      */
-    public RentalAgreementDTO createRentalAgreement(RentalRequest rentalRequest) {
+    public RentalAgreementDTO createRentalAgreement(RentalRequest rentalRequest) throws ParseException {
+
+        HolidayService holidayService = new HolidayService();
+        Date checkoutDate = holidayService.parseDate(rentalRequest.getCheckoutDate());
+        DateRangeDetails dateRangeDetails = holidayService.calculateDatesForRental(checkoutDate,rentalRequest.getRentailDaysCount());
 
         RentalRequestDTO rentRequest = rentalRequestRepository
                 .save(RentalRequestDTO.builder()
                         .toolCode(rentalRequest.getToolCode())
                         .rentailDaysCount(rentalRequest.getRentailDaysCount())
                         .discountPercent(rentalRequest.getDiscountPercent())
-                        .checkoutDate(new Date())
+                        .checkoutDate(holidayService.parseDate(rentalRequest.getCheckoutDate()))
                         .build());
+
 
         RentalAgreementDTO rentalAgreementDTO =  RentalAgreementDTO.builder()
                 .toolCode(rentalRequest.getToolCode())
@@ -61,6 +68,7 @@ public class RentalAgreementService {
         rentalAgreementRepository.findAll().forEach(agreement -> {
             log.info("Tool Code in agreement " + agreement.getRentalRequest().getToolCode());
         });
+        log.info(dateRangeDetails.toString());
         log.info("");
 
         return rentalAgreementDTO;
