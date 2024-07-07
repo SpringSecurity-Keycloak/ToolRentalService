@@ -1,6 +1,7 @@
 package io.rentalapp.service;
 
 import io.rentalapp.common.DateRangeDetails;
+import io.rentalapp.common.DateUtility;
 import io.rentalapp.common.ValidationException;
 import io.rentalapp.model.RentalRequest;
 import io.rentalapp.persist.RentalAgreementRepository;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +24,8 @@ import java.util.Set;
 public class RentalAgreementService {
 
     private static final Logger log = LoggerFactory.getLogger(RentalAgreementService.class);
+    DateUtility dateUtility = new DateUtility();
+
     @Autowired
     RentalRequestRepository rentalRequestRepository;
 
@@ -47,7 +49,7 @@ public class RentalAgreementService {
         }
 
         HolidayService holidayService = new HolidayService();
-        Date checkoutDate = holidayService.parseDate(rentalRequest.getCheckoutDate());
+        Date checkoutDate = dateUtility.parseDate(rentalRequest.getCheckoutDate());
         Date rentalDueDate = DateUtils.addDays(checkoutDate,rentalRequest.getRentailDaysCount());
 
         DateRangeDetails dateRangeDetails = holidayService.calculateDatesForRental(checkoutDate,rentalRequest.getRentailDaysCount());

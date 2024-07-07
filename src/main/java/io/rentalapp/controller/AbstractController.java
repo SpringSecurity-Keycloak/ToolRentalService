@@ -2,6 +2,7 @@ package io.rentalapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rentalapp.api.ApiApi;
+import io.rentalapp.common.DateUtility;
 import io.rentalapp.model.*;
 import io.rentalapp.persist.ToolRepository;
 import io.rentalapp.persist.model.RentalAgreementDTO;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -41,6 +41,8 @@ public class AbstractController implements ApiApi {
     private final HttpServletRequest request;
 
     private HolidayService holidayService = new HolidayService();
+
+    private DateUtility dateUtility = new DateUtility();
 
     @Autowired
     ToolRepository repository;
@@ -132,15 +134,17 @@ public class AbstractController implements ApiApi {
     public ResponseEntity<RentalAgreement> postApiV1ToolCodeCheckout(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("code") String code
             , @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody RentalRequest body
     ) {
+
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
 
                 RentalAgreementDTO newAgreement  = rentalAgreementService.createRentalAgreement(body);
-
                 RentalAgreement rentalAgreement = new RentalAgreement();
+
                 rentalAgreement.setToolCode(newAgreement.getToolCode());
-                rentalAgreement.setCheckoutDate(holidayService.format(newAgreement.getCheckoutDate()));
-                rentalAgreement.setDueDate( holidayService.format(newAgreement.getDueDate()));
+                rentalAgreement.setCheckoutDate(dateUtility.format(newAgreement.getCheckoutDate()));
+                rentalAgreement.setDueDate( dateUtility.format(newAgreement.getDueDate()));
+
                 ResponseEntity<RentalAgreement> response = ResponseEntity.ok(rentalAgreement);
                 return response;
 
