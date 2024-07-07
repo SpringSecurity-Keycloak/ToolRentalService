@@ -17,6 +17,8 @@ import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
 
+import io.rentalapp.common.DateRangeDetails;
+
 public class HolidayService {
 
     SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
@@ -37,13 +39,16 @@ public class HolidayService {
                     boolean isWeekend = weekend.contains(d.getDayOfWeek());
                     boolean isHoliday = HolidayService.isHoliday(d);
                     if (isWeekend) {
-                        dateRangeDetails.totalWeekendDays++;
+                        long totalWeekendDays = dateRangeDetails.getTotalWeekendDays();
+                        dateRangeDetails.setTotalWeekendDays(++totalWeekendDays);
                     }
                     else if (isHoliday) {
-                        dateRangeDetails.totalHolidays++;
+                        long totalHolidays = dateRangeDetails.getTotalHolidays();
+                        dateRangeDetails.setTotalHolidays(++totalHolidays);
                     }
                     else {
-                        dateRangeDetails.totalWeekDays++;
+                        long totalWeekDays = dateRangeDetails.getTotalWeekDays();
+                        dateRangeDetails.setTotalWeekDays(++totalWeekDays);
                     }
 
                 });
@@ -101,6 +106,15 @@ public class HolidayService {
     public Date parseDate(String date) throws ParseException {
 
         return formatter.parse(date);
+    }
+
+    /**
+     *
+     * @param date
+     * @return
+     */
+    public String format(Date date) {
+        return formatter.format(date);
     }
 
 }

@@ -9,6 +9,7 @@ import io.rentalapp.model.ToolPricingDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rentalapp.persist.ToolRepository;
 import io.rentalapp.persist.model.RentalAgreementDTO;
+import io.rentalapp.service.HolidayService;
 import io.rentalapp.service.RentalAgreementService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -41,6 +42,8 @@ public class AbstractController implements ApiApi {
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
+
+    private HolidayService holidayService = new HolidayService();
 
     @Autowired
     ToolRepository repository;
@@ -139,8 +142,8 @@ public class AbstractController implements ApiApi {
 
                 RentalAgreement rentalAgreement = new RentalAgreement();
                 rentalAgreement.setToolCode(newAgreement.getToolCode());
-                rentalAgreement.setCheckoutDate(newAgreement.getCheckoutDate().toString());
-
+                rentalAgreement.setCheckoutDate(holidayService.format(newAgreement.getCheckoutDate()));
+                rentalAgreement.setDueDate( holidayService.format(newAgreement.getDueDate()));
                 ResponseEntity<RentalAgreement> response = ResponseEntity.ok(rentalAgreement);
                 return response;
             } catch (Exception e) {

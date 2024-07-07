@@ -1,10 +1,12 @@
 package io.rentalapp.service;
 
+import io.rentalapp.common.DateRangeDetails;
 import io.rentalapp.model.RentalRequest;
 import io.rentalapp.persist.RentalAgreementRepository;
 import io.rentalapp.persist.RentalRequestRepository;
 import io.rentalapp.persist.model.RentalAgreementDTO;
 import io.rentalapp.persist.model.RentalRequestDTO;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.time.LocalDate;
 import java.util.Date;
 
 @Service
@@ -34,6 +35,8 @@ public class RentalAgreementService {
 
         HolidayService holidayService = new HolidayService();
         Date checkoutDate = holidayService.parseDate(rentalRequest.getCheckoutDate());
+        Date rentalDueDate = DateUtils.addDays(checkoutDate,rentalRequest.getRentailDaysCount());
+
         DateRangeDetails dateRangeDetails = holidayService.calculateDatesForRental(checkoutDate,rentalRequest.getRentailDaysCount());
 
         RentalRequestDTO rentRequest = rentalRequestRepository
@@ -41,14 +44,15 @@ public class RentalAgreementService {
                         .toolCode(rentalRequest.getToolCode())
                         .rentailDaysCount(rentalRequest.getRentailDaysCount())
                         .discountPercent(rentalRequest.getDiscountPercent())
-                        .checkoutDate(holidayService.parseDate(rentalRequest.getCheckoutDate()))
+                        .checkoutDate(checkoutDate)
                         .build());
 
 
         RentalAgreementDTO rentalAgreementDTO =  RentalAgreementDTO.builder()
                 .toolCode(rentalRequest.getToolCode())
-                .checkoutDate(new Date())
+                .checkoutDate(checkoutDate)
                 .discountPercent(BigDecimal.valueOf(10))
+                .dueDate(rentalDueDate)
                 .rentalRequest(rentRequest)
                 .build();
 

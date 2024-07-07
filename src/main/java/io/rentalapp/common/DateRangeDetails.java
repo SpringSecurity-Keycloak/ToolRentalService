@@ -1,4 +1,4 @@
-package io.rentalapp.service;
+package io.rentalapp.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
