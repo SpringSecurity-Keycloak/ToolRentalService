@@ -1,5 +1,7 @@
 package io.rentalapp.service;
 
+import io.rentalapp.common.DateRangeDetails;
+import io.rentalapp.common.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,15 +11,11 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.TemporalAmount;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
-
-import io.rentalapp.common.DateRangeDetails;
 
 public class HolidayService {
 
@@ -103,9 +101,16 @@ public class HolidayService {
      * @param date
      * @return
      */
-    public Date parseDate(String date) throws ParseException {
+    public Date parseDate(String date)  {
 
-        return formatter.parse(date);
+        Date result = null;
+        try {
+            formatter.setLenient(false);
+            result = formatter.parse(date);
+        } catch (ParseException e) {
+            throw new ValidationException("Expected date format is MM-dd-YYYY. for e.g 12-31-2024");
+        }
+        return result;
     }
 
     /**

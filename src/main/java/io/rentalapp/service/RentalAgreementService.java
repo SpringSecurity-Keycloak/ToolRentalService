@@ -1,9 +1,11 @@
 package io.rentalapp.service;
 
 import io.rentalapp.common.DateRangeDetails;
+import io.rentalapp.common.ValidationException;
 import io.rentalapp.model.RentalRequest;
 import io.rentalapp.persist.RentalAgreementRepository;
 import io.rentalapp.persist.RentalRequestRepository;
+import io.rentalapp.persist.ToolRepository;
 import io.rentalapp.persist.model.RentalAgreementDTO;
 import io.rentalapp.persist.model.RentalRequestDTO;
 import org.apache.commons.lang3.time.DateUtils;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class RentalAgreementService {
@@ -26,12 +30,21 @@ public class RentalAgreementService {
     @Autowired
     RentalAgreementRepository rentalAgreementRepository;
 
+    @Autowired
+    ToolRepository toolRepository;
+
+    Set<String> validToolCodes = new HashSet<String>();
+
     /**
      * Creates a rental agreement based on a rental request
      * @param rentalRequest
      * @return
      */
-    public RentalAgreementDTO createRentalAgreement(RentalRequest rentalRequest) throws ParseException {
+    public RentalAgreementDTO createRentalAgreement(RentalRequest rentalRequest) {
+
+        if (!isValidToolCode(rentalRequest.getToolCode())) {
+            throw new ValidationException("Invalid Tool Code Entered");
+        }
 
         HolidayService holidayService = new HolidayService();
         Date checkoutDate = holidayService.parseDate(rentalRequest.getCheckoutDate());
@@ -76,6 +89,19 @@ public class RentalAgreementService {
         log.info("");
 
         return rentalAgreementDTO;
+    }
+
+    /**
+     *
+     * @param toolCode
+     * @return
+     */
+    boolean isValidToolCode(String toolCode) {
+
+        if (validToolCodes.isEmpty()) {
+            toolRepository.findAll().forEach(tool -> validToolCodes.add(tool.getCode()));
+        }
+        return validToolCodes.contains(toolCode);
     }
 
 }

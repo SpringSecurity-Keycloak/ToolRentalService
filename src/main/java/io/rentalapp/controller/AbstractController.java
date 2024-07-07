@@ -1,12 +1,8 @@
 package io.rentalapp.controller;
 
-import io.rentalapp.api.ApiApi;
-import io.rentalapp.model.Inventory;
-import io.rentalapp.model.RentalAgreement;
-import io.rentalapp.model.RentalRequest;
-import io.rentalapp.model.Tool;
-import io.rentalapp.model.ToolPricingDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.rentalapp.api.ApiApi;
+import io.rentalapp.model.*;
 import io.rentalapp.persist.ToolRepository;
 import io.rentalapp.persist.model.RentalAgreementDTO;
 import io.rentalapp.service.HolidayService;
@@ -19,13 +15,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -137,7 +134,7 @@ public class AbstractController implements ApiApi {
     ) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-            try {
+
                 RentalAgreementDTO newAgreement  = rentalAgreementService.createRentalAgreement(body);
 
                 RentalAgreement rentalAgreement = new RentalAgreement();
@@ -146,10 +143,7 @@ public class AbstractController implements ApiApi {
                 rentalAgreement.setDueDate( holidayService.format(newAgreement.getDueDate()));
                 ResponseEntity<RentalAgreement> response = ResponseEntity.ok(rentalAgreement);
                 return response;
-            } catch (Exception e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<RentalAgreement>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+
         }
 
         return new ResponseEntity<RentalAgreement>(HttpStatus.NOT_IMPLEMENTED);

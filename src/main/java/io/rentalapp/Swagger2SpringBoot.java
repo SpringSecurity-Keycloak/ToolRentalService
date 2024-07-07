@@ -1,23 +1,18 @@
 package io.rentalapp;
 
+import io.rentalapp.configuration.LocalDateConverter;
+import io.rentalapp.configuration.LocalDateTimeConverter;
 import io.rentalapp.model.Tool;
+import io.rentalapp.persist.ToolRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.rentalapp.configuration.LocalDateTimeConverter;
-import io.rentalapp.configuration.LocalDateConverter;
-
-import io.rentalapp.persist.ToolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
