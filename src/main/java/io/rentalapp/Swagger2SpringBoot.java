@@ -2,8 +2,10 @@ package io.rentalapp;
 
 import io.rentalapp.configuration.LocalDateConverter;
 import io.rentalapp.configuration.LocalDateTimeConverter;
-import io.rentalapp.model.Tool;
+import io.rentalapp.persist.ToolRentalPriceRepositorty;
 import io.rentalapp.persist.ToolRepository;
+import io.rentalapp.persist.model.ToolDTO;
+import io.rentalapp.persist.model.ToolRentalPriceDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import java.math.BigDecimal;
+
 @SpringBootApplication
 @ComponentScan(basePackages = { "io.rentalapp"})
 public class Swagger2SpringBoot implements CommandLineRunner {
@@ -26,6 +30,14 @@ public class Swagger2SpringBoot implements CommandLineRunner {
     @Autowired
     ToolRepository repository;
 
+    @Autowired
+    ToolRentalPriceRepositorty toolRentalPriceRepositorty;
+
+    /**
+     *
+     * @param arg0
+     * @throws Exception
+     */
     @Override
     public void run(String... arg0) throws Exception {
         if (arg0.length > 0 && arg0[0].equals("exitcode")) {
@@ -33,6 +45,11 @@ public class Swagger2SpringBoot implements CommandLineRunner {
         }
     }
 
+    /**
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         new SpringApplication(Swagger2SpringBoot.class).run(args);
     }
@@ -46,6 +63,9 @@ public class Swagger2SpringBoot implements CommandLineRunner {
         }
     }
 
+    /**
+     *
+     */
     class ExitException extends RuntimeException implements ExitCodeGenerator {
         private static final long serialVersionUID = 1L;
 
@@ -56,20 +76,53 @@ public class Swagger2SpringBoot implements CommandLineRunner {
 
     }
 
+    /**
+     *
+     * @param repository
+     * @return
+     */
     @Bean
     public CommandLineRunner demo(ToolRepository repository) {
         return (args) -> {
 
-            repository.save(new Tool("CHNS","Chainsaw","Stihl"));
-            repository.save(new Tool("LADW","Ladder","Werner"));
-            repository.save(new Tool("JAKD","Jackhammer","DeWalt"));
-            repository.save(new Tool("JAKR","Jackhammer","Ridgid"));
+            /*
+             * Load data for Tool
+             */
+            repository.save(new ToolDTO("CHNS","Chainsaw","Stihl"));
+            repository.save(new ToolDTO("LADW","Ladder","Werner"));
+            repository.save(new ToolDTO("JAKD","Jackhammer","DeWalt"));
+            repository.save(new ToolDTO("JAKR","Jackhammer","Ridgid"));
 
-            // fetch all customers
-            log.info("Customers found with findAll():");
+            /*
+             * Load Data for Tool Pricing
+             *
+             */
+            toolRentalPriceRepositorty.save(new ToolRentalPriceDTO("Ladder"
+                    , BigDecimal.valueOf(1.99)
+                    ,true,
+                    true,
+                    false));
+            toolRentalPriceRepositorty.save(new ToolRentalPriceDTO("Chainsaw"
+                    , BigDecimal.valueOf(1.49)
+                    ,true,
+                    false,
+                    true));
+            toolRentalPriceRepositorty.save(new ToolRentalPriceDTO("Chainsaw"
+                    , BigDecimal.valueOf(2.99)
+                    ,true,
+                    false,
+                    false));
+
+
+            // fetch all Tools available for rent
+            log.info("Tools found with findAll():");
             log.info("-------------------------------");
             repository.findAll().forEach(tool -> {
                 log.info(tool.toString());
+            });
+            // fetch pricing for each tool type
+            toolRentalPriceRepositorty.findAll().forEach(toolType -> {
+                log.info(toolType.toString());
             });
             log.info("");
         };

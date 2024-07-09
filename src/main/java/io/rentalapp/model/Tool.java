@@ -17,10 +17,7 @@ import java.util.Objects;
 @Schema(description = "Tools available for rent")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
-@Entity
-@AllArgsConstructor
-@NoArgsConstructor
-public class Tool  extends BaseEntity {
+public class Tool {
 
   @JsonProperty("code")
   private String code = null;

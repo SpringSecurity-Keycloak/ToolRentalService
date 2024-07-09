@@ -48,11 +48,28 @@ public class RentalAgreementService {
             throw new ValidationException("Invalid Tool Code Entered");
         }
 
-        HolidayService holidayService = new HolidayService();
         Date checkoutDate = dateUtility.parseDate(rentalRequest.getCheckoutDate());
         Date rentalDueDate = DateUtils.addDays(checkoutDate,rentalRequest.getRentailDaysCount());
 
+        /*
+         * Read the last rental agreement created for the requested tool to determine if the tool is
+         * available for rental
+         */
+
+        /*
+         * Determine number of weekdays and holidays in the requested rental period
+         */
+        HolidayService holidayService = new HolidayService();
         DateRangeDetails dateRangeDetails = holidayService.calculateDatesForRental(checkoutDate,rentalRequest.getRentailDaysCount());
+
+        /*
+         * Get pricing rules per tool
+         */
+
+        /*
+         * Calculate the pricing based on the days requested and the pricing rules
+         * for the tool
+         */
 
         RentalRequestDTO rentRequest = rentalRequestRepository
                 .save(RentalRequestDTO.builder()

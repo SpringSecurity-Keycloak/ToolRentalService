@@ -74,6 +74,13 @@ public class AbstractController implements ApiApi {
                 });
                 List<Tool> tools = StreamSupport
                                    .stream(repository.findAll().spliterator(),false)
+                                    .map( toolDto -> {
+                                        Tool tool = new Tool();
+                                        tool.setBrand(toolDto.getBrand());
+                                        tool.setCode(toolDto.getCode());
+                                        tool.type(toolDto.getType());
+                                        return tool;
+                                    })
                                     .collect(Collectors.toList());
                 ResponseEntity<List<Tool>> response = ResponseEntity.ok(tools);
                 return response;
