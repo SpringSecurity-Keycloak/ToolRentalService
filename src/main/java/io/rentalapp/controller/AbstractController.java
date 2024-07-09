@@ -3,6 +3,7 @@ package io.rentalapp.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rentalapp.api.ApiApi;
 import io.rentalapp.common.DateUtility;
+import io.rentalapp.common.ValidationException;
 import io.rentalapp.model.*;
 import io.rentalapp.persist.ToolRepository;
 import io.rentalapp.persist.model.RentalAgreementDTO;
@@ -11,6 +12,7 @@ import io.rentalapp.service.RentalAgreementService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,6 +146,16 @@ public class AbstractController implements ApiApi {
 
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
+
+               if (StringUtils.isAllEmpty(body.getToolCode()) ||
+                       StringUtils.isAllEmpty(body.getCheckoutDate()) ||
+                               body.getRentailDaysCount() == null) {
+                   throw new ValidationException("Tool code, checkoutdate and rental days are required for this request");
+               }
+
+               if (body.getDiscountPercent() == null) {
+                   body.setDiscountPercent(0);
+                }
 
                 RentalAgreementDTO newAgreement  = rentalAgreementService.createRentalAgreement(body);
                 RentalAgreement rentalAgreement = new RentalAgreement();

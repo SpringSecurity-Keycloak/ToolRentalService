@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 
 @Service
 public class RentalAgreementService {
@@ -65,7 +64,7 @@ public class RentalAgreementService {
         RentalRequestDTO rentRequest = rentalRequestRepository
                 .save(RentalRequestDTO.builder()
                         .toolCode(rentalRequest.getToolCode())
-                        .rentailDaysCount(rentalRequest.getRentailDaysCount())
+                        .rentalDaysCount(rentalRequest.getRentailDaysCount())
                         .discountPercent(rentalRequest.getDiscountPercent())
                         .checkoutDate(checkoutDate)
                         .build());

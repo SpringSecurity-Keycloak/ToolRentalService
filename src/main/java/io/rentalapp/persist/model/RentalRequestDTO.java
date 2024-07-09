@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Date;
 
 @Data
@@ -19,8 +21,10 @@ public class RentalRequestDTO extends BaseEntity {
 
     private String toolCode = null;
 
-    private Integer rentailDaysCount = null;
+    private Integer rentalDaysCount = null;
 
+    @Max(value=100,message = "Discount percent is not in the range 0-100")
+    @Min(value = 0,message = "Discount percent is not in the range 0-100")
     private Integer discountPercent = null;
 
     private Date checkoutDate = null;

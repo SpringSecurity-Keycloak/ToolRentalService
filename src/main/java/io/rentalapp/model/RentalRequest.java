@@ -26,7 +26,7 @@ public class RentalRequest   extends BaseEntity {
   @JsonProperty("tool_code")
   private String toolCode = null;
 
-  @JsonProperty("rentail_days_count")
+  @JsonProperty("rental_days_count")
   private Integer rentailDaysCount = null;
 
   @JsonProperty("discount_percent")
@@ -45,12 +45,9 @@ public class RentalRequest   extends BaseEntity {
    * @return toolCode
    **/
   @Schema(required = true, accessMode = Schema.AccessMode.READ_ONLY, description = "")
-      @NotNull
-
-    public String getToolCode() {
+  public String getToolCode() {
     return toolCode;
   }
-
   public void setToolCode(String toolCode) {
     this.toolCode = toolCode;
   }
@@ -65,9 +62,7 @@ public class RentalRequest   extends BaseEntity {
    * @return rentailDaysCount
    **/
   @Schema(required = true, description = "")
-      @NotNull
-
-    public Integer getRentailDaysCount() {
+  public Integer getRentailDaysCount() {
     return rentailDaysCount;
   }
 
@@ -87,8 +82,6 @@ public class RentalRequest   extends BaseEntity {
    * @return discountPercent
    **/
   @Schema(description = "")
-      @NotNull
-
   @Min(0) @Max(100)   public Integer getDiscountPercent() {
     return discountPercent;
   }
@@ -107,12 +100,9 @@ public class RentalRequest   extends BaseEntity {
    * @return checkoutDate
    **/
   @Schema(required = true, description = "")
-      @NotNull
-
-    public String getCheckoutDate() {
+  public String getCheckoutDate() {
     return checkoutDate;
   }
-
   public void setCheckoutDate(String checkoutDate) {
     this.checkoutDate = checkoutDate;
   }
