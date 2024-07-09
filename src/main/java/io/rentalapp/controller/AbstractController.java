@@ -149,8 +149,17 @@ public class AbstractController implements ApiApi {
                 RentalAgreement rentalAgreement = new RentalAgreement();
 
                 rentalAgreement.setToolCode(newAgreement.getToolCode());
+                rentalAgreement.setToolBrand(newAgreement.getToolBrand());
+                rentalAgreement.setToolType(newAgreement.getToolType());
+                rentalAgreement.setRentalDays(newAgreement.getRentalDays().toPlainString());
                 rentalAgreement.setCheckoutDate(dateUtility.format(newAgreement.getCheckoutDate()));
                 rentalAgreement.setDueDate( dateUtility.format(newAgreement.getDueDate()));
+                rentalAgreement.setDailyCharge(newAgreement.getDailyCharge());
+                rentalAgreement.setChargeDays(newAgreement.getChargeDays());
+                rentalAgreement.setPreDiscountCharge(newAgreement.getPreDiscountCharge());
+                rentalAgreement.setDiscountPercent(newAgreement.getDiscountPercent());
+                rentalAgreement.setDiscountAmount(newAgreement.getDiscountAmount());
+                rentalAgreement.setFinalCharge(newAgreement.getFinalCharge());
 
                 ResponseEntity<RentalAgreement> response = ResponseEntity.ok(rentalAgreement);
                 return response;

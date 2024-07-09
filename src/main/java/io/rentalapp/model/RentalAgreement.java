@@ -52,6 +52,9 @@ public class RentalAgreement  extends BaseEntity {
   @JsonProperty("discount_percent")
   private BigDecimal discountPercent = null;
 
+  @JsonProperty("discount_amount")
+  private BigDecimal discountAmount = null;
+
   @JsonProperty("final_charge")
   private BigDecimal finalCharge = null;
 
@@ -252,6 +255,24 @@ public class RentalAgreement  extends BaseEntity {
     this.finalCharge = finalCharge;
   }
 
+  /**
+   * Get discountAmount
+   * @return discountAmount
+   **/
+  @Schema(description = "")
+  @Valid
+  public BigDecimal getDiscountAmount() {
+    return discountAmount;
+  }
+  public void setDiscountAmount(BigDecimal discountAmount) {
+    this.discountAmount = discountAmount;
+  }
+
+  public RentalAgreement discountAmount(BigDecimal discountAmount) {
+    this.discountAmount = discountAmount;
+    return this;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -273,12 +294,13 @@ public class RentalAgreement  extends BaseEntity {
         Objects.equals(this.chargeDays, rentalAgreement.chargeDays) &&
         Objects.equals(this.preDiscountCharge, rentalAgreement.preDiscountCharge) &&
         Objects.equals(this.discountPercent, rentalAgreement.discountPercent) &&
-        Objects.equals(this.finalCharge, rentalAgreement.finalCharge);
+        Objects.equals(this.finalCharge, rentalAgreement.finalCharge) &&
+        Objects.equals(this.discountAmount, rentalAgreement.discountAmount);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, toolCode, toolType, toolBrand, rentalDays, checkoutDate, dueDate, dailyCharge, chargeDays, preDiscountCharge, discountPercent, finalCharge);
+    return Objects.hash(id, toolCode, toolType, toolBrand, rentalDays, checkoutDate, dueDate, dailyCharge, chargeDays, preDiscountCharge, discountPercent, finalCharge,discountAmount);
   }
 
   @Override

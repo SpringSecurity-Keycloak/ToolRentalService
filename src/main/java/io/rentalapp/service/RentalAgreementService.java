@@ -60,9 +60,15 @@ public class RentalAgreementService {
         Date rentalDueDate = DateUtils.addDays(checkoutDate,rentalRequest.getRentailDaysCount());
 
         /*
-         * Read the last rental agreement created for the requested tool to determine if the tool is
-         * available for rental
+         * Save the rental request
          */
+        RentalRequestDTO rentRequest = rentalRequestRepository
+                .save(RentalRequestDTO.builder()
+                        .toolCode(rentalRequest.getToolCode())
+                        .rentailDaysCount(rentalRequest.getRentailDaysCount())
+                        .discountPercent(rentalRequest.getDiscountPercent())
+                        .checkoutDate(checkoutDate)
+                        .build());
 
         /*
          * Determine number of weekdays and holidays in the requested rental period
@@ -74,14 +80,6 @@ public class RentalAgreementService {
          * Get pricing rules for requested tool
          */
         ToolRentalPriceDTO rentalPrice = getRentalPriceForTool(availableTools.get(rentalRequest.getToolCode()).getType());
-
-        RentalRequestDTO rentRequest = rentalRequestRepository
-                .save(RentalRequestDTO.builder()
-                        .toolCode(rentalRequest.getToolCode())
-                        .rentailDaysCount(rentalRequest.getRentailDaysCount())
-                        .discountPercent(rentalRequest.getDiscountPercent())
-                        .checkoutDate(checkoutDate)
-                        .build());
 
         /*
          * Calculate the pricing based on the days requested and the pricing rules
@@ -160,6 +158,7 @@ public class RentalAgreementService {
         return RentalAgreementDTO.builder()
                 .toolCode(rentalRequest.getToolCode())
                 .toolType(rentalPrice.getToolType())
+                .toolBrand(availableTools.get(rentalRequest.getToolCode()).getBrand())
                 .checkoutDate(rentalRequest.getCheckoutDate())
                 .dueDate(rentalDueDate)
                 .rentalRequest(rentalRequest)
