@@ -6,9 +6,12 @@ import io.rentalapp.common.ValidationException;
 import io.rentalapp.model.RentalRequest;
 import io.rentalapp.persist.RentalAgreementRepository;
 import io.rentalapp.persist.RentalRequestRepository;
+import io.rentalapp.persist.ToolRentalPriceRepositorty;
 import io.rentalapp.persist.ToolRepository;
 import io.rentalapp.persist.model.RentalAgreementDTO;
 import io.rentalapp.persist.model.RentalRequestDTO;
+import io.rentalapp.persist.model.ToolDTO;
+import io.rentalapp.persist.model.ToolRentalPriceDTO;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class RentalAgreementService {
@@ -35,7 +38,12 @@ public class RentalAgreementService {
     @Autowired
     ToolRepository toolRepository;
 
-    Set<String> validToolCodes = new HashSet<String>();
+    @Autowired
+    ToolRentalPriceRepositorty toolRentalPriceRepositorty = null;
+
+    HashMap<String, ToolDTO> availableTools = new HashMap<String,ToolDTO>();
+
+    HashMap<String,ToolRentalPriceDTO> rentalPriceMap = new HashMap<String,ToolRentalPriceDTO>();
 
     /**
      * Creates a rental agreement based on a rental request
@@ -63,13 +71,9 @@ public class RentalAgreementService {
         DateRangeDetails dateRangeDetails = holidayService.calculateDatesForRental(checkoutDate,rentalRequest.getRentailDaysCount());
 
         /*
-         * Get pricing rules per tool
+         * Get pricing rules for requested tool
          */
-
-        /*
-         * Calculate the pricing based on the days requested and the pricing rules
-         * for the tool
-         */
+        ToolRentalPriceDTO rentalPrice = getRentalPriceForTool(availableTools.get(rentalRequest.getToolCode()).getType());
 
         RentalRequestDTO rentRequest = rentalRequestRepository
                 .save(RentalRequestDTO.builder()
@@ -79,16 +83,19 @@ public class RentalAgreementService {
                         .checkoutDate(checkoutDate)
                         .build());
 
+        /*
+         * Calculate the pricing based on the days requested and the pricing rules
+         * for the tool and return a rental agreement
+         */
+        RentalAgreementDTO rentalAgreement = this.calcuateRentalPrice(rentRequest,
+                dateRangeDetails,
+                rentalPrice,
+                rentalDueDate);
 
-        RentalAgreementDTO rentalAgreementDTO =  RentalAgreementDTO.builder()
-                .toolCode(rentalRequest.getToolCode())
-                .checkoutDate(checkoutDate)
-                .discountPercent(BigDecimal.valueOf(10))
-                .dueDate(rentalDueDate)
-                .rentalRequest(rentRequest)
-                .build();
-
-        rentalAgreementDTO = rentalAgreementRepository.save(rentalAgreementDTO);
+        /*
+         * Save the rental agreement
+         */
+        rentalAgreement = rentalAgreementRepository.save(rentalAgreement);
 
         // fetch all rental requests
         log.info("All Rental Requests found with findAll():");
@@ -103,24 +110,94 @@ public class RentalAgreementService {
         log.info("-------------------------------");
         rentalAgreementRepository.findAll().forEach(agreement -> {
             log.info("Tool Code in agreement " + agreement.getRentalRequest().getToolCode());
+            log.info("Agreement Details " + agreement);
         });
         log.info(dateRangeDetails.toString());
         log.info("");
 
-        return rentalAgreementDTO;
+        return rentalAgreement;
     }
 
     /**
      *
+     * @param rentalRequest
+     * @param dateRangeDetails
+     * @param rentalPrice
+     * @return The new Rental Agreement with calculated Rental price
+     */
+    private RentalAgreementDTO calcuateRentalPrice(RentalRequestDTO rentalRequest,
+                                                   DateRangeDetails dateRangeDetails,
+                                                   ToolRentalPriceDTO rentalPrice,
+                                                   Date rentalDueDate) {
+        long preDiscountCharge = 0;
+        long rentalDays = dateRangeDetails.getTotalWeekDays() + dateRangeDetails.getTotalWeekendDays() + dateRangeDetails.getTotalHolidays();
+        long chargeDays = rentalDays;
+
+        long weekDayCharge = dateRangeDetails.getTotalWeekDays() * rentalPrice.getDailyCharge().longValue();
+
+        long weekendCharge = 0;
+        if (rentalPrice.isWeekEndChargeable()) {
+            weekendCharge = dateRangeDetails.getTotalWeekendDays() * rentalPrice.getDailyCharge().longValue();
+        }
+        else {
+            chargeDays = chargeDays - dateRangeDetails.getTotalWeekendDays();
+        }
+
+        long holidayCharge = 0;
+        if (rentalPrice.isHolidayChargeable()) {
+            holidayCharge = dateRangeDetails.getTotalHolidays() * rentalPrice.getDailyCharge().longValue();
+        }
+        else {
+            chargeDays = chargeDays - dateRangeDetails.getTotalHolidays();
+        }
+
+        preDiscountCharge = weekDayCharge + weekendCharge + holidayCharge;
+        long discount = 0;
+        if (rentalRequest.getDiscountPercent() > 0) {
+            discount = preDiscountCharge * preDiscountCharge / 100;
+        }
+
+        return RentalAgreementDTO.builder()
+                .toolCode(rentalRequest.getToolCode())
+                .toolType(rentalPrice.getToolType())
+                .checkoutDate(rentalRequest.getCheckoutDate())
+                .dueDate(rentalDueDate)
+                .rentalRequest(rentalRequest)
+                .dailyCharge(rentalPrice.getDailyCharge())
+                .chargeDays(BigDecimal.valueOf(chargeDays))
+                .rentalDays(BigDecimal.valueOf(rentalDays))
+                .preDiscountCharge(BigDecimal.valueOf(preDiscountCharge))
+                .discountPercent(BigDecimal.valueOf(rentalRequest.getDiscountPercent().longValue()))
+                .discountAmount(BigDecimal.valueOf(discount))
+                .finalCharge( BigDecimal.valueOf(preDiscountCharge - discount ))
+                .build();
+    }
+
+    /**
+     * Lookup the pricing details for the given tool type
+     * @param toolType
+     * @return Pricing Details
+     */
+    private ToolRentalPriceDTO getRentalPriceForTool(String toolType) {
+        if (rentalPriceMap.isEmpty()) {
+            toolRentalPriceRepositorty.findAll().forEach( toolPrice -> rentalPriceMap.put(toolPrice.getToolType(),toolPrice));
+        }
+
+        return rentalPriceMap.get(toolType);
+    }
+
+    /**
+     * Check if the given tool code is a valid tool code
      * @param toolCode
-     * @return
+     * @return true if the tool code is valid
      */
     boolean isValidToolCode(String toolCode) {
 
-        if (validToolCodes.isEmpty()) {
-            toolRepository.findAll().forEach(tool -> validToolCodes.add(tool.getCode()));
+        if (availableTools.isEmpty()) {
+            toolRepository.findAll().forEach(tool -> availableTools.put(tool.getCode(),tool));
         }
-        return validToolCodes.contains(toolCode);
+
+        return availableTools.containsKey(toolCode);
     }
 
 }

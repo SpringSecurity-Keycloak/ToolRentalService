@@ -24,7 +24,7 @@ public class RentalAgreementDTO extends BaseEntity {
 
         private String toolBrand = null;
 
-        private String rentalDays = null;
+        private BigDecimal rentalDays = null;
 
         private Date checkoutDate = null;
 
@@ -37,6 +37,8 @@ public class RentalAgreementDTO extends BaseEntity {
         private BigDecimal preDiscountCharge = null;
 
         private BigDecimal discountPercent = null;
+
+        private BigDecimal discountAmount = null;
 
         private BigDecimal finalCharge = null;
 
