@@ -19,8 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RentalAgreementService {
@@ -126,6 +127,21 @@ public class RentalAgreementService {
                                                    DateRangeDetails dateRangeDetails,
                                                    ToolRentalPriceDTO rentalPrice,
                                                    Date rentalDueDate) {
+
+        log.info("Search for rental agreements with due date < "+ rentalRequest.getCheckoutDate());
+        /*
+        Iterable<RentalAgreementDTO> existingAgreements = this.rentalAgreementRepository.findRentalAgreementBetween(
+                rentalRequest.getCheckoutDate(),rentalDueDate,rentalRequest.getToolCode());
+
+         */
+        Iterable<RentalAgreementDTO> existingAgreements = rentalAgreementRepository.findAll();
+        existingAgreements.forEach(agreement -> log.info("Existing agreements : "+agreement.toString()));
+
+        boolean isToolAvailableForRental = this.isToolAvailableForRent(existingAgreements,dateRangeDetails);
+        if (!isToolAvailableForRental) {
+            throw new ValidationException("Tool is unavailable to rent for the requested dates");
+        }
+
         long preDiscountCharge = 0;
         long rentalDays = dateRangeDetails.getTotalWeekDays() + dateRangeDetails.getTotalWeekendDays() + dateRangeDetails.getTotalHolidays();
         long chargeDays = rentalDays;
@@ -151,7 +167,7 @@ public class RentalAgreementService {
         preDiscountCharge = weekDayCharge + weekendCharge + holidayCharge;
         long discount = 0;
         if (rentalRequest.getDiscountPercent() > 0) {
-            discount = preDiscountCharge * preDiscountCharge / 100;
+            discount = preDiscountCharge * rentalRequest.getDiscountPercent() / 100;
         }
 
         return RentalAgreementDTO.builder()
@@ -169,6 +185,34 @@ public class RentalAgreementService {
                 .discountAmount(BigDecimal.valueOf(discount))
                 .finalCharge( BigDecimal.valueOf(preDiscountCharge - discount ))
                 .build();
+    }
+
+    /**
+     * Check if the tool is available for the requested dates
+     * @param existingAgreements
+     * @param requestedRentalDates
+     * @return
+     */
+    private boolean isToolAvailableForRent(Iterable<RentalAgreementDTO> existingAgreements, DateRangeDetails requestedRentalDates) {
+        boolean toolIsAvailableForRental = false;
+        final List<LocalDate> checkedOutDates = new ArrayList<LocalDate>();
+        existingAgreements.forEach(rentalAgreement -> checkedOutDates.addAll(HolidayService.getDateRange(rentalAgreement)));
+
+        List<LocalDate> requestedDates = requestedRentalDates.getDateRange();
+
+        log.info("CheckedOutDates = "+ checkedOutDates);
+        log.info("RequestedDates = "+ requestedDates);
+
+        Set<LocalDate> datesUnavailableForRental =requestedDates.stream()
+                .distinct()
+                .filter(checkedOutDates::contains)
+                .collect(Collectors.toSet());
+
+        if (datesUnavailableForRental.isEmpty()) {
+            toolIsAvailableForRental = true;
+        }
+
+        return toolIsAvailableForRental;
     }
 
     /**

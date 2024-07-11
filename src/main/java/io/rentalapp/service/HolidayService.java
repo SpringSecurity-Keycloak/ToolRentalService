@@ -1,6 +1,7 @@
 package io.rentalapp.service;
 
 import io.rentalapp.common.DateRangeDetails;
+import io.rentalapp.persist.model.RentalAgreementDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,10 +9,10 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class HolidayService {
 
@@ -19,6 +20,24 @@ public class HolidayService {
 
     private static final Logger log = LoggerFactory.getLogger(HolidayService.class);
 
+    /**
+     * Get a range of dates for the passed in rental Agreement
+     * @param rentalAgreement
+     * @return
+     */
+    public static List<LocalDate> getDateRange(RentalAgreementDTO rentalAgreement) {
+        LocalDate startDate = rentalAgreement.getCheckoutDate().toInstant().atZone(ZoneId.of("America/Chicago")).toLocalDate();
+        LocalDate endDate = rentalAgreement.getDueDate().toInstant().atZone(ZoneId.of("America/Chicago")).toLocalDate();
+
+        return startDate.datesUntil(endDate).collect(Collectors.toList());
+    }
+
+    /**
+     *
+     * @param checkoutDate
+     * @param checkoutDays
+     * @return
+     */
     public DateRangeDetails calculateDatesForRental(Date checkoutDate, int checkoutDays) {
 
         LocalDate startDate = checkoutDate.toInstant().atZone(ZoneId.of("America/Chicago")).toLocalDate();
@@ -30,6 +49,7 @@ public class HolidayService {
 
         startDate.datesUntil(endDate)
                 .forEach(rentalDay -> {
+                    rentalPeriod.getDateRange().add(rentalDay);
                     boolean isWeekend = weekend.contains(rentalDay.getDayOfWeek());
                     boolean isHoliday = HolidayService.isHoliday(rentalDay);
 
