@@ -2,7 +2,7 @@ package io.rentalapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rentalapp.api.ApiApi;
-import io.rentalapp.common.DateUtility;
+import io.rentalapp.common.DataFormat;
 import io.rentalapp.common.ValidationException;
 import io.rentalapp.model.*;
 import io.rentalapp.persist.ToolRepository;
@@ -44,8 +44,6 @@ public class AbstractController implements ApiApi {
     private final HttpServletRequest request;
 
     private HolidayService holidayService = new HolidayService();
-
-    private DateUtility dateUtility = new DateUtility();
 
     @Autowired
     ToolRepository repository;
@@ -165,12 +163,12 @@ public class AbstractController implements ApiApi {
                 rentalAgreement.setToolBrand(newAgreement.getToolBrand());
                 rentalAgreement.setToolType(newAgreement.getToolType());
                 rentalAgreement.setRentalDays(String.valueOf(newAgreement.getRentalDays()));
-                rentalAgreement.setCheckoutDate(dateUtility.format(newAgreement.getCheckoutDate()));
-                rentalAgreement.setDueDate( dateUtility.format(newAgreement.getDueDate()));
+                rentalAgreement.setCheckoutDate(DataFormat.format(newAgreement.getCheckoutDate()));
+                rentalAgreement.setDueDate( DataFormat.format(newAgreement.getDueDate()));
                 rentalAgreement.setDailyCharge(newAgreement.getDailyCharge());
                 rentalAgreement.setChargeDays(BigDecimal.valueOf(newAgreement.getChargeDays()));
                 rentalAgreement.setPreDiscountCharge(newAgreement.getPreDiscountCharge());
-                rentalAgreement.setDiscountPercent(newAgreement.getDiscountPercent());
+                rentalAgreement.setDiscountPercent(DataFormat.toPercentString(newAgreement.getDiscountPercent()));
                 rentalAgreement.setDiscountAmount(newAgreement.getDiscountAmount());
                 rentalAgreement.setFinalCharge(newAgreement.getFinalCharge());
 

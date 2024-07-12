@@ -1,16 +1,14 @@
 package io.rentalapp.common;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * Utility class to handle common date related functionality
- */
-public class DateUtility {
+public class DataFormat {
 
-    SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+    private static SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
 
     /**
      * Convert the passed in String into a date. Throws a ValidationException if the string is not in
@@ -18,7 +16,7 @@ public class DateUtility {
      * @param date
      * @return
      */
-    public Date parseDate(String date)  {
+    public static Date parseDate(String date)  {
 
         Date result = null;
         try {
@@ -35,7 +33,16 @@ public class DateUtility {
      * @param date
      * @return
      */
-    public String format(Date date) {
+    public static String format(Date date) {
         return formatter.format(date);
+    }
+
+    /**
+     *
+     * @param value
+     * @return
+     */
+    public static final String toPercentString(BigDecimal value) {
+       return  String.format( "%s%%", value.toPlainString());
     }
 }

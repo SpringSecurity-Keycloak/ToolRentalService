@@ -50,7 +50,7 @@ public class RentalAgreement  extends BaseEntity {
   private BigDecimal preDiscountCharge = null;
 
   @JsonProperty("discount_percent")
-  private BigDecimal discountPercent = null;
+  private String discountPercent = null;
 
   @JsonProperty("discount_amount")
   private BigDecimal discountAmount = null;
@@ -219,7 +219,7 @@ public class RentalAgreement  extends BaseEntity {
     this.preDiscountCharge = preDiscountCharge;
   }
 
-  public RentalAgreement discountPercent(BigDecimal discountPercent) {
+  public RentalAgreement discountPercent(String discountPercent) {
     this.discountPercent = discountPercent;
     return this;
   }
@@ -230,10 +230,10 @@ public class RentalAgreement  extends BaseEntity {
    **/
   @Schema(description = "")
   @Valid
-  public BigDecimal getDiscountPercent() {
+  public String getDiscountPercent() {
     return discountPercent;
   }
-  public void setDiscountPercent(BigDecimal discountPercent) {
+  public void setDiscountPercent(String discountPercent) {
     this.discountPercent = discountPercent;
   }
 

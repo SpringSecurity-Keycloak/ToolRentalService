@@ -1,9 +1,6 @@
 package io.rentalapp.service;
 
-import io.rentalapp.common.DateRangeDetails;
-import io.rentalapp.common.DateUtility;
-import io.rentalapp.common.DecimalNumber;
-import io.rentalapp.common.ValidationException;
+import io.rentalapp.common.*;
 import io.rentalapp.model.RentalAgreement;
 import io.rentalapp.model.RentalRequest;
 import io.rentalapp.persist.RentalAgreementRepository;
@@ -30,7 +27,6 @@ import java.util.stream.Collectors;
 public class RentalAgreementService {
 
     private static final Logger log = LoggerFactory.getLogger(RentalAgreementService.class);
-    DateUtility dateUtility = new DateUtility();
 
     @Autowired
     RentalRequestRepository rentalRequestRepository;
@@ -59,7 +55,7 @@ public class RentalAgreementService {
             throw new ValidationException("Invalid Tool Code Entered");
         }
 
-        Date checkoutDate = dateUtility.parseDate(rentalRequest.getCheckoutDate());
+        Date checkoutDate = DataFormat.parseDate(rentalRequest.getCheckoutDate());
         Date rentalDueDate = DateUtils.addDays(checkoutDate,rentalRequest.getRentailDaysCount());
 
         /*
@@ -257,18 +253,18 @@ public class RentalAgreementService {
         rentalAgreementRepository.findAll().forEach(rentalAgreement -> {
             RentalAgreement agreement = new RentalAgreement();
             agreement.setDiscountAmount(rentalAgreement.getDiscountAmount());
-            agreement.setDiscountPercent(rentalAgreement.getDiscountPercent());
+            agreement.setDiscountPercent(rentalAgreement.getDiscountPercent().toPlainString());
             agreement.setPreDiscountCharge(rentalAgreement.getPreDiscountCharge());
             agreement.setDailyCharge(rentalAgreement.getDailyCharge());
             agreement.setRentalDays(String.valueOf(rentalAgreement.getRentalDays()));
             agreement.setFinalCharge(rentalAgreement.getFinalCharge());
             agreement.setToolType(rentalAgreement.getToolType());
             agreement.setChargeDays(BigDecimal.valueOf(rentalAgreement.getChargeDays()));
-            agreement.setDueDate(dateUtility.format(rentalAgreement.getDueDate()));
+            agreement.setDueDate(DataFormat.format(rentalAgreement.getDueDate()));
             agreement.setToolBrand(rentalAgreement.getToolBrand());
             agreement.setToolType(rentalAgreement.getToolType());
             agreement.setToolCode(rentalAgreement.getToolCode());
-            agreement.setCheckoutDate(dateUtility.format(rentalAgreement.getCheckoutDate()));
+            agreement.setCheckoutDate(DataFormat.format(rentalAgreement.getCheckoutDate()));
 
 
             allRentalAgreements.add(agreement);
