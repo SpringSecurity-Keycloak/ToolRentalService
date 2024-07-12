@@ -163,8 +163,8 @@ public class AbstractController implements ApiApi {
                 rentalAgreement.setToolBrand(newAgreement.getToolBrand());
                 rentalAgreement.setToolType(newAgreement.getToolType());
                 rentalAgreement.setRentalDays(String.valueOf(newAgreement.getRentalDays()));
-                rentalAgreement.setCheckoutDate(DataFormat.format(newAgreement.getCheckoutDate()));
-                rentalAgreement.setDueDate( DataFormat.format(newAgreement.getDueDate()));
+                rentalAgreement.setCheckoutDate(DataFormat.toDateString(newAgreement.getCheckoutDate()));
+                rentalAgreement.setDueDate( DataFormat.toDateString(newAgreement.getDueDate()));
                 rentalAgreement.setDailyCharge(newAgreement.getDailyCharge());
                 rentalAgreement.setChargeDays(BigDecimal.valueOf(newAgreement.getChargeDays()));
                 rentalAgreement.setPreDiscountCharge(newAgreement.getPreDiscountCharge());

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -260,11 +259,11 @@ public class RentalAgreementService {
             agreement.setFinalCharge(rentalAgreement.getFinalCharge());
             agreement.setToolType(rentalAgreement.getToolType());
             agreement.setChargeDays(BigDecimal.valueOf(rentalAgreement.getChargeDays()));
-            agreement.setDueDate(DataFormat.format(rentalAgreement.getDueDate()));
+            agreement.setDueDate(DataFormat.toDateString(rentalAgreement.getDueDate()));
             agreement.setToolBrand(rentalAgreement.getToolBrand());
             agreement.setToolType(rentalAgreement.getToolType());
             agreement.setToolCode(rentalAgreement.getToolCode());
-            agreement.setCheckoutDate(DataFormat.format(rentalAgreement.getCheckoutDate()));
+            agreement.setCheckoutDate(DataFormat.toDateString(rentalAgreement.getCheckoutDate()));
 
 
             allRentalAgreements.add(agreement);

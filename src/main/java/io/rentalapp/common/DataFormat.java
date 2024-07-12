@@ -33,7 +33,7 @@ public class DataFormat {
      * @param date
      * @return
      */
-    public static String format(Date date) {
+    public static String toDateString(Date date) {
         return formatter.format(date);
     }
 
