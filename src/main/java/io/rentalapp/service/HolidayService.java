@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 
 public class HolidayService {
 
-
-
     private static final Logger log = LoggerFactory.getLogger(HolidayService.class);
 
     /**
@@ -33,6 +31,13 @@ public class HolidayService {
     }
 
     /**
+     * Calculate
+     * <p>
+     *     <ul> The dates between the checkedDate and number of days to checkout in the rental agreement </ul>
+     *     <ul> The number of weekdays in the rental agreement </ul>
+     *     <ul> The number of weekends in the rental agreement </ul>
+     *     <ul> The number of holidays in the rental agreement </ul>
+     * </p>
      *
      * @param checkoutDate
      * @param checkoutDays
@@ -54,12 +59,12 @@ public class HolidayService {
                     boolean isHoliday = HolidayService.isHoliday(rentalDay);
 
                     if (isWeekend) {
-                        long totalWeekendDays = rentalPeriod.getTotalWeekendDays();
+                        int totalWeekendDays = rentalPeriod.getTotalWeekendDays();
                         rentalPeriod.setTotalWeekendDays(++totalWeekendDays);
                     }
 
                     if (isHoliday) {
-                        long totalHolidays = rentalPeriod.getTotalHolidays();
+                        int totalHolidays = rentalPeriod.getTotalHolidays();
                         rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
 
@@ -104,7 +109,7 @@ public class HolidayService {
     }
 
     /**
-     *
+     * Check if the passed in date falls under an observed holiday
      * @param date
      * @return
      */

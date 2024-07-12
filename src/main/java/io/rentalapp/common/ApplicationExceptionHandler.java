@@ -8,18 +8,25 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * Spring Handler to capture all exceptions thrown by the application and translate into
+ * HTTP responses
+ */
 @ControllerAdvice
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
 
+    /**
+     * Handle all custom/business related exceptions thrown by the application
+     * @param ex ValidationException is the exception thrown by failed business rules
+     * @param request
+     * @return
+     */
     @ExceptionHandler
     protected ResponseEntity<Object> handleConflict(ValidationException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
@@ -27,6 +34,14 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
                 new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    /**
+     * Handle all framework related exceptions thrown by the application such as number format exceptions etc
+     * @param ex
+     * @param headers
+     * @param status
+     * @param request
+     * @return
+     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
         logger.info(ex.getClass().getName());

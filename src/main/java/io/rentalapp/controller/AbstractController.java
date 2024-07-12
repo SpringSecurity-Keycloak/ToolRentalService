@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -163,11 +164,11 @@ public class AbstractController implements ApiApi {
                 rentalAgreement.setToolCode(newAgreement.getToolCode());
                 rentalAgreement.setToolBrand(newAgreement.getToolBrand());
                 rentalAgreement.setToolType(newAgreement.getToolType());
-                rentalAgreement.setRentalDays(newAgreement.getRentalDays().toPlainString());
+                rentalAgreement.setRentalDays(String.valueOf(newAgreement.getRentalDays()));
                 rentalAgreement.setCheckoutDate(dateUtility.format(newAgreement.getCheckoutDate()));
                 rentalAgreement.setDueDate( dateUtility.format(newAgreement.getDueDate()));
                 rentalAgreement.setDailyCharge(newAgreement.getDailyCharge());
-                rentalAgreement.setChargeDays(newAgreement.getChargeDays());
+                rentalAgreement.setChargeDays(BigDecimal.valueOf(newAgreement.getChargeDays()));
                 rentalAgreement.setPreDiscountCharge(newAgreement.getPreDiscountCharge());
                 rentalAgreement.setDiscountPercent(newAgreement.getDiscountPercent());
                 rentalAgreement.setDiscountAmount(newAgreement.getDiscountAmount());
@@ -179,6 +180,26 @@ public class AbstractController implements ApiApi {
         }
 
         return new ResponseEntity<RentalAgreement>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    /**
+     * Retrieve all Rental Agreements stored in the system
+     * @return
+     */
+    @Override
+    public ResponseEntity<List<RentalAgreement>> getAllRentalAgreements() {
+        String accept = request.getHeader("Accept");
+        if (accept != null && accept.contains("application/json")) {
+            try {
+                    List<RentalAgreement> allRentalAgreements = rentalAgreementService.findAllRentalAgreements();
+                    return ResponseEntity.ok().body(allRentalAgreements);
+                } catch (Exception e) {
+                    log.error("Couldn't serialize response for content type application/json", e);
+                    return new ResponseEntity<List<RentalAgreement>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<List<RentalAgreement>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }

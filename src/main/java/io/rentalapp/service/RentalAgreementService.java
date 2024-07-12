@@ -2,7 +2,9 @@ package io.rentalapp.service;
 
 import io.rentalapp.common.DateRangeDetails;
 import io.rentalapp.common.DateUtility;
+import io.rentalapp.common.DecimalNumber;
 import io.rentalapp.common.ValidationException;
+import io.rentalapp.model.RentalAgreement;
 import io.rentalapp.model.RentalRequest;
 import io.rentalapp.persist.RentalAgreementRepository;
 import io.rentalapp.persist.RentalRequestRepository;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -142,15 +145,16 @@ public class RentalAgreementService {
             throw new ValidationException("Tool is unavailable to rent for the requested dates");
         }
 
-        long preDiscountCharge = 0;
-        long rentalDays = dateRangeDetails.getTotalWeekDays() + dateRangeDetails.getTotalWeekendDays() + dateRangeDetails.getTotalHolidays();
-        long chargeDays = rentalDays;
+        double preDiscountCharge = 0;
+        int rentalDays = dateRangeDetails.getTotalWeekDays() + dateRangeDetails.getTotalWeekendDays() + dateRangeDetails.getTotalHolidays();
+        int chargeDays = rentalDays;
 
         long weekDayCharge = dateRangeDetails.getTotalWeekDays() * rentalPrice.getDailyCharge().longValue();
 
         long weekendCharge = 0;
         if (rentalPrice.isWeekEndChargeable()) {
-            weekendCharge = dateRangeDetails.getTotalWeekendDays() * rentalPrice.getDailyCharge().longValue();
+            //weekendCharge = dateRangeDetails.getTotalWeekendDays() * rentalPrice.getDailyCharge().longValue();
+            chargeDays = chargeDays - dateRangeDetails.getTotalWeekendDays();
         }
         else {
             chargeDays = chargeDays - dateRangeDetails.getTotalWeekendDays();
@@ -158,14 +162,16 @@ public class RentalAgreementService {
 
         long holidayCharge = 0;
         if (rentalPrice.isHolidayChargeable()) {
-            holidayCharge = dateRangeDetails.getTotalHolidays() * rentalPrice.getDailyCharge().longValue();
+            //holidayCharge = dateRangeDetails.getTotalHolidays() * rentalPrice.getDailyCharge().longValue();
+            chargeDays = chargeDays - dateRangeDetails.getTotalHolidays();
         }
         else {
             chargeDays = chargeDays - dateRangeDetails.getTotalHolidays();
         }
 
-        preDiscountCharge = weekDayCharge + weekendCharge + holidayCharge;
-        long discount = 0;
+        preDiscountCharge = chargeDays * rentalPrice.getDailyCharge().doubleValue();
+
+        double discount = 0;
         if (rentalRequest.getDiscountPercent() > 0) {
             discount = preDiscountCharge * rentalRequest.getDiscountPercent() / 100;
         }
@@ -178,12 +184,12 @@ public class RentalAgreementService {
                 .dueDate(rentalDueDate)
                 .rentalRequest(rentalRequest)
                 .dailyCharge(rentalPrice.getDailyCharge())
-                .chargeDays(BigDecimal.valueOf(chargeDays))
-                .rentalDays(BigDecimal.valueOf(rentalDays))
-                .preDiscountCharge(BigDecimal.valueOf(preDiscountCharge))
-                .discountPercent(BigDecimal.valueOf(rentalRequest.getDiscountPercent().longValue()))
-                .discountAmount(BigDecimal.valueOf(discount))
-                .finalCharge( BigDecimal.valueOf(preDiscountCharge - discount ))
+                .chargeDays(Integer.valueOf(chargeDays))
+                .rentalDays(Integer.valueOf(rentalDays))
+                .preDiscountCharge(DecimalNumber.valueOf(preDiscountCharge))
+                .discountPercent(DecimalNumber.valueOf(rentalRequest.getDiscountPercent().longValue()))
+                .discountAmount(DecimalNumber.valueOf(discount))
+                .finalCharge(DecimalNumber.valueOf(preDiscountCharge - discount ))
                 .build();
     }
 
@@ -242,4 +248,32 @@ public class RentalAgreementService {
         return availableTools.containsKey(toolCode);
     }
 
+    /**
+     *
+     * @return
+     */
+    public List<RentalAgreement> findAllRentalAgreements() {
+        List<RentalAgreement> allRentalAgreements = new ArrayList<RentalAgreement>();
+        rentalAgreementRepository.findAll().forEach(rentalAgreement -> {
+            RentalAgreement agreement = new RentalAgreement();
+            agreement.setDiscountAmount(rentalAgreement.getDiscountAmount());
+            agreement.setDiscountPercent(rentalAgreement.getDiscountPercent());
+            agreement.setPreDiscountCharge(rentalAgreement.getPreDiscountCharge());
+            agreement.setDailyCharge(rentalAgreement.getDailyCharge());
+            agreement.setRentalDays(String.valueOf(rentalAgreement.getRentalDays()));
+            agreement.setFinalCharge(rentalAgreement.getFinalCharge());
+            agreement.setToolType(rentalAgreement.getToolType());
+            agreement.setChargeDays(BigDecimal.valueOf(rentalAgreement.getChargeDays()));
+            agreement.setDueDate(dateUtility.format(rentalAgreement.getDueDate()));
+            agreement.setToolBrand(rentalAgreement.getToolBrand());
+            agreement.setToolType(rentalAgreement.getToolType());
+            agreement.setToolCode(rentalAgreement.getToolCode());
+            agreement.setCheckoutDate(dateUtility.format(rentalAgreement.getCheckoutDate()));
+
+
+            allRentalAgreements.add(agreement);
+        });
+
+        return allRentalAgreements;
+    }
 }

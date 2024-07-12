@@ -1,6 +1,7 @@
 package io.rentalapp.persist.model;
 
 import io.rentalapp.common.BaseEntity;
+import io.rentalapp.common.DecimalNumber;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class RentalAgreementDTO extends BaseEntity {
 
         private String toolBrand = null;
 
-        private BigDecimal rentalDays = null;
+        private Integer rentalDays = null;
 
         private Date checkoutDate = null;
 
@@ -32,7 +33,7 @@ public class RentalAgreementDTO extends BaseEntity {
 
         private BigDecimal dailyCharge = null;
 
-        private BigDecimal chargeDays = null;
+        private Integer chargeDays = null;
 
         private BigDecimal preDiscountCharge = null;
 

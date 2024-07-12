@@ -5,6 +5,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * Base class that every JPA related persistent class needs to implement
+ */
 @Entity
 public abstract class BaseEntity {
 

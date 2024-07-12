@@ -68,5 +68,13 @@ public interface ApiApi {
 , @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody RentalRequest body
 );
 
+    @Operation(summary = "Get all rental agreements", description = "", tags={ "RentalAgreement" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = RentalAgreement.class)))) })
+    @RequestMapping(value = "/api/v1/tool/rentalAgreement",
+            produces = { "application/json" },
+            method = RequestMethod.GET)
+    ResponseEntity<List<RentalAgreement>> getAllRentalAgreements();
+
 }
 
