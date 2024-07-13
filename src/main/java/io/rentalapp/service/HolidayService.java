@@ -45,9 +45,9 @@ public class HolidayService {
      */
     public DateRangeDetails calculateDatesForRental(Date checkoutDate, int checkoutDays) {
 
-        LocalDate startDate = checkoutDate.toInstant().atZone(ZoneId.of("America/Chicago")).toLocalDate();
+        LocalDate startDate = checkoutDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate endDate = LocalDate.from(startDate);
-        endDate = endDate.plusDays(checkoutDays);
+        endDate = endDate.plusDays(checkoutDays+1);
 
         final DateRangeDetails rentalPeriod = new DateRangeDetails();
         Set<DayOfWeek> weekend = EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);

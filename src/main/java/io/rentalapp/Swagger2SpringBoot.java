@@ -76,55 +76,5 @@ public class Swagger2SpringBoot implements CommandLineRunner {
 
     }
 
-    /**
-     *
-     * @param repository
-     * @return
-     */
-    @Bean
-    public CommandLineRunner demo(ToolRepository repository) {
-        return (args) -> {
 
-            /*
-             * Load data for Tool
-             */
-            repository.save(new ToolDTO("CHNS","Chainsaw","Stihl"));
-            repository.save(new ToolDTO("LADW","Ladder","Werner"));
-            repository.save(new ToolDTO("JAKD","Jackhammer","DeWalt"));
-            repository.save(new ToolDTO("JAKR","Jackhammer","Ridgid"));
-
-            /*
-             * Load Data for Tool Pricing
-             *
-             */
-            toolRentalPriceRepositorty.save(new ToolRentalPriceDTO("Ladder"
-                    , BigDecimal.valueOf(1.99)
-                    ,true,
-                    true,
-                    false));
-            toolRentalPriceRepositorty.save(new ToolRentalPriceDTO("Chainsaw"
-                    , BigDecimal.valueOf(1.49)
-                    ,true,
-                    false,
-                    true));
-            toolRentalPriceRepositorty.save(new ToolRentalPriceDTO("Chainsaw"
-                    , BigDecimal.valueOf(2.99)
-                    ,true,
-                    false,
-                    false));
-
-
-            // fetch all Tools available for rent
-            log.info("Tools found with findAll():");
-            log.info("-------------------------------");
-            repository.findAll().forEach(tool -> {
-                log.info(tool.toString());
-            });
-            // fetch pricing for each tool type
-            toolRentalPriceRepositorty.findAll().forEach(toolType -> {
-                log.info(toolType.toString());
-            });
-            log.info("");
-        };
-    }
 }
