@@ -38,7 +38,7 @@ public class DataFormat {
     }
 
     /**
-     *
+     * Return a string value of the format ###%
      * @param value
      * @return
      */

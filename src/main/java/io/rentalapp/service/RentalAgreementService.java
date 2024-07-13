@@ -83,7 +83,7 @@ public class RentalAgreementService {
          * Calculate the pricing based on the days requested and the pricing rules
          * for the tool and return a rental agreement
          */
-        RentalAgreementDTO rentalAgreement = this.calcuateRentalPrice(rentRequest,
+        RentalAgreementDTO rentalAgreement = this.calculateRentalPrice(rentRequest,
                 dateRangeDetails,
                 rentalPrice,
                 rentalDueDate);
@@ -121,19 +121,12 @@ public class RentalAgreementService {
      * @param rentalPrice
      * @return The new Rental Agreement with calculated Rental price
      */
-    private RentalAgreementDTO calcuateRentalPrice(RentalRequestDTO rentalRequest,
-                                                   DateRangeDetails dateRangeDetails,
-                                                   ToolRentalPriceDTO rentalPrice,
-                                                   Date rentalDueDate) {
+    private RentalAgreementDTO calculateRentalPrice(RentalRequestDTO rentalRequest,
+                                                    DateRangeDetails dateRangeDetails,
+                                                    ToolRentalPriceDTO rentalPrice,
+                                                    Date rentalDueDate) {
 
-        log.info("Search for rental agreements with due date < "+ rentalRequest.getCheckoutDate());
-        /*
-        Iterable<RentalAgreementDTO> existingAgreements = this.rentalAgreementRepository.findRentalAgreementBetween(
-                rentalRequest.getCheckoutDate(),rentalDueDate,rentalRequest.getToolCode());
-
-         */
         Iterable<RentalAgreementDTO> existingAgreements = rentalAgreementRepository.findAll();
-        existingAgreements.forEach(agreement -> log.info("Existing agreements : "+agreement.toString()));
 
         boolean isToolAvailableForRental = this.isToolAvailableForRent(existingAgreements,dateRangeDetails);
         if (!isToolAvailableForRental) {
@@ -144,23 +137,15 @@ public class RentalAgreementService {
         int rentalDays = dateRangeDetails.getTotalWeekDays() + dateRangeDetails.getTotalWeekendDays() + dateRangeDetails.getTotalHolidays();
         int chargeDays = rentalDays;
 
-        long weekDayCharge = dateRangeDetails.getTotalWeekDays() * rentalPrice.getDailyCharge().longValue();
-
         long weekendCharge = 0;
-        if (rentalPrice.isWeekEndChargeable()) {
+        if (!rentalPrice.isWeekEndChargeable()) {
             //weekendCharge = dateRangeDetails.getTotalWeekendDays() * rentalPrice.getDailyCharge().longValue();
-            chargeDays = chargeDays - dateRangeDetails.getTotalWeekendDays();
-        }
-        else {
             chargeDays = chargeDays - dateRangeDetails.getTotalWeekendDays();
         }
 
         long holidayCharge = 0;
-        if (rentalPrice.isHolidayChargeable()) {
+        if (!rentalPrice.isHolidayChargeable()) {
             //holidayCharge = dateRangeDetails.getTotalHolidays() * rentalPrice.getDailyCharge().longValue();
-            chargeDays = chargeDays - dateRangeDetails.getTotalHolidays();
-        }
-        else {
             chargeDays = chargeDays - dateRangeDetails.getTotalHolidays();
         }
 
