@@ -1,11 +1,8 @@
 package io.rentalapp.service;
 
-import io.rentalapp.BootStrap;
 import io.rentalapp.api.model.RentalAgreement;
-import io.rentalapp.common.DataFormat;
-import io.rentalapp.common.DecimalNumber;
 import io.rentalapp.api.model.RentalRequest;
-import io.rentalapp.persist.entity.RentalAgreementEntity;
+import io.rentalapp.common.DecimalNumber;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +21,6 @@ import static org.junit.Assert.assertEquals;
 public class RentalAgreementServiceTestCase {
     @Autowired
     RentalAgreementService rentalAgreementService;
-
-    @Autowired
-    BootStrap bootStrap;
 
     @Test
     @Transactional

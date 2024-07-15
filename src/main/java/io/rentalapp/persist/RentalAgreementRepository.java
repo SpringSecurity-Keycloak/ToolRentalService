@@ -15,5 +15,8 @@ public interface RentalAgreementRepository extends CrudRepository<RentalAgreemen
 
     @Override
     Iterable<RentalAgreementEntity> findAll();
+
+    @Query(" from RentalAgreement where toolCode =:requestedToolcode")
+    Iterable<RentalAgreementEntity> findAllByToolCode(@Param("requestedToolcode") String toolCode);
 }
 

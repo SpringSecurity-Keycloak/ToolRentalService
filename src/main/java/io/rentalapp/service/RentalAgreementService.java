@@ -109,7 +109,7 @@ public class RentalAgreementService {
                                                        ToolRentalPriceEntity rentalPrice,
                                                        Date rentalDueDate) {
 
-        Iterable<RentalAgreementEntity> existingAgreements = rentalAgreementRepository.findAll();
+        Iterable<RentalAgreementEntity> existingAgreements = rentalAgreementRepository.findAllByToolCode(rentalRequest.getToolCode());
 
         boolean isToolAvailableForRental = this.isToolAvailableForRent(existingAgreements,dateRangeDetails);
         if (!isToolAvailableForRental) {
