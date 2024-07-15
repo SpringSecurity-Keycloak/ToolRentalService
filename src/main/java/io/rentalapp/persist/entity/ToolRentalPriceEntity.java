@@ -1,4 +1,4 @@
-package io.rentalapp.persist.model;
+package io.rentalapp.persist.entity;
 
 import io.rentalapp.common.BaseEntity;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Entity(name = "ToolRentalPrice")
 @AllArgsConstructor
 @NoArgsConstructor
-public class ToolRentalPriceDTO extends BaseEntity {
+public class ToolRentalPriceEntity extends BaseEntity {
 
     private String toolType = null;
 

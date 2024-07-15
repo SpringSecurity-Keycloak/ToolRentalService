@@ -1,4 +1,4 @@
-package io.rentalapp.model;
+package io.rentalapp.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.rentalapp.common.BaseEntity;

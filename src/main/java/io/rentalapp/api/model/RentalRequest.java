@@ -1,4 +1,4 @@
-package io.rentalapp.model;
+package io.rentalapp.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.rentalapp.common.BaseEntity;
@@ -9,7 +9,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**

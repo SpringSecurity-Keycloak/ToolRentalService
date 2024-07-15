@@ -1,5 +1,10 @@
 package io.rentalapp.common;
 
+import io.rentalapp.api.model.RentalAgreement;
+import io.rentalapp.api.model.Tool;
+import io.rentalapp.persist.entity.RentalAgreementEntity;
+import io.rentalapp.persist.entity.ToolEntity;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,5 +49,41 @@ public class DataFormat {
      */
     public static final String toPercentString(BigDecimal value) {
        return  String.format( "%s%%", value.toPlainString());
+    }
+
+    /**
+     *
+     * @param rentalAgreement
+     * @return
+     */
+    public static RentalAgreement toRentalAgreement(RentalAgreementEntity rentalAgreement) {
+        RentalAgreement agreement = new RentalAgreement();
+        agreement.setDiscountAmount(rentalAgreement.getDiscountAmount());
+        agreement.setDiscountPercent(rentalAgreement.getDiscountPercent().toPlainString());
+        agreement.setPreDiscountCharge(rentalAgreement.getPreDiscountCharge());
+        agreement.setDailyCharge(rentalAgreement.getDailyCharge());
+        agreement.setRentalDays(String.valueOf(rentalAgreement.getRentalDays()));
+        agreement.setFinalCharge(rentalAgreement.getFinalCharge());
+        agreement.setToolType(rentalAgreement.getToolType());
+        agreement.setChargeDays(BigDecimal.valueOf(rentalAgreement.getChargeDays()));
+        agreement.setDueDate(DataFormat.toDateString(rentalAgreement.getDueDate()));
+        agreement.setToolBrand(rentalAgreement.getToolBrand());
+        agreement.setToolType(rentalAgreement.getToolType());
+        agreement.setToolCode(rentalAgreement.getToolCode());
+        agreement.setCheckoutDate(DataFormat.toDateString(rentalAgreement.getCheckoutDate()));
+        return agreement;
+    }
+
+    /**
+     *
+     * @param toolEntity
+     * @return
+     */
+    public static Tool toTool(ToolEntity toolEntity) {
+        Tool tool = new Tool();
+        tool.setBrand(toolEntity.getBrand());
+        tool.setCode(toolEntity.getCode());
+        tool.type(toolEntity.getType());
+        return tool;
     }
 }

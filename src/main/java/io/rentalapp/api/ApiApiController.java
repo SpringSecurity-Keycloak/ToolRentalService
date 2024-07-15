@@ -2,7 +2,7 @@ package io.rentalapp.api;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.rentalapp.controller.AbstractController;
+import io.rentalapp.api.controller.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -2,8 +2,8 @@ package io.rentalapp;
 
 import io.rentalapp.persist.ToolRentalPriceRepositorty;
 import io.rentalapp.persist.ToolRepository;
-import io.rentalapp.persist.model.ToolDTO;
-import io.rentalapp.persist.model.ToolRentalPriceDTO;
+import io.rentalapp.persist.entity.ToolEntity;
+import io.rentalapp.persist.entity.ToolRentalPriceEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,26 +36,26 @@ public class BootStrap {
             /*
              * Load data for Tool
              */
-            repository.save(new ToolDTO("CHNS","Chainsaw","Stihl"));
-            repository.save(new ToolDTO("LADW","Ladder","Werner"));
-            repository.save(new ToolDTO("JAKD","Jackhammer","DeWalt"));
-            repository.save(new ToolDTO("JAKR","Jackhammer","Ridgid"));
+            repository.save(new ToolEntity("CHNS","Chainsaw","Stihl"));
+            repository.save(new ToolEntity("LADW","Ladder","Werner"));
+            repository.save(new ToolEntity("JAKD","Jackhammer","DeWalt"));
+            repository.save(new ToolEntity("JAKR","Jackhammer","Ridgid"));
 
             /*
              * Load Data for Tool Pricing
              *
              */
-            toolRentalPriceRepositorty.save(new ToolRentalPriceDTO("Ladder"
+            toolRentalPriceRepositorty.save(new ToolRentalPriceEntity("Ladder"
                     , BigDecimal.valueOf(1.99)
                     ,true,
                     true,
                     false));
-            toolRentalPriceRepositorty.save(new ToolRentalPriceDTO("Chainsaw"
+            toolRentalPriceRepositorty.save(new ToolRentalPriceEntity("Chainsaw"
                     , BigDecimal.valueOf(1.49)
                     ,true,
                     false,
                     true));
-            toolRentalPriceRepositorty.save(new ToolRentalPriceDTO("Chainsaw"
+            toolRentalPriceRepositorty.save(new ToolRentalPriceEntity("Chainsaw"
                     , BigDecimal.valueOf(2.99)
                     ,true,
                     false,

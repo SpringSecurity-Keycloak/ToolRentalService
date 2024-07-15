@@ -5,7 +5,7 @@
  */
 package io.rentalapp.api;
 
-import io.rentalapp.model.*;
+import io.rentalapp.api.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

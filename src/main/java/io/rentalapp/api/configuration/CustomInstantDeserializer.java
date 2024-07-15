@@ -1,4 +1,4 @@
-package io.rentalapp.configuration;
+package io.rentalapp.api.configuration;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonTokenId;

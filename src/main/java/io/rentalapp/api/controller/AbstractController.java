@@ -1,12 +1,9 @@
-package io.rentalapp.controller;
+package io.rentalapp.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rentalapp.api.ApiApi;
-import io.rentalapp.common.DataFormat;
+import io.rentalapp.api.model.*;
 import io.rentalapp.common.ValidationException;
-import io.rentalapp.model.*;
-import io.rentalapp.persist.ToolRepository;
-import io.rentalapp.persist.model.RentalAgreementDTO;
 import io.rentalapp.service.HolidayService;
 import io.rentalapp.service.RentalAgreementService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,10 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * The REST Controller that implements the OpenApi operations
@@ -44,9 +38,6 @@ public class AbstractController implements ApiApi {
     private final HttpServletRequest request;
 
     private HolidayService holidayService = new HolidayService();
-
-    @Autowired
-    ToolRepository repository;
 
     @Autowired
     RentalAgreementService rentalAgreementService;
@@ -70,19 +61,7 @@ public class AbstractController implements ApiApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                repository.findAll().forEach(tool -> {
-                    log.info(tool.toString());
-                });
-                List<Tool> tools = StreamSupport
-                                   .stream(repository.findAll().spliterator(),false)
-                                    .map( toolDto -> {
-                                        Tool tool = new Tool();
-                                        tool.setBrand(toolDto.getBrand());
-                                        tool.setCode(toolDto.getCode());
-                                        tool.type(toolDto.getType());
-                                        return tool;
-                                    })
-                                    .collect(Collectors.toList());
+                List<Tool> tools = rentalAgreementService.findAllTools();
                 ResponseEntity<List<Tool>> response = ResponseEntity.ok(tools);
                 return response;
             } catch (Exception e) {
@@ -156,22 +135,7 @@ public class AbstractController implements ApiApi {
                    body.setDiscountPercent(0);
                 }
 
-                RentalAgreementDTO newAgreement  = rentalAgreementService.createRentalAgreement(body);
-                RentalAgreement rentalAgreement = new RentalAgreement();
-
-                rentalAgreement.setToolCode(newAgreement.getToolCode());
-                rentalAgreement.setToolBrand(newAgreement.getToolBrand());
-                rentalAgreement.setToolType(newAgreement.getToolType());
-                rentalAgreement.setRentalDays(String.valueOf(newAgreement.getRentalDays()));
-                rentalAgreement.setCheckoutDate(DataFormat.toDateString(newAgreement.getCheckoutDate()));
-                rentalAgreement.setDueDate( DataFormat.toDateString(newAgreement.getDueDate()));
-                rentalAgreement.setDailyCharge(newAgreement.getDailyCharge());
-                rentalAgreement.setChargeDays(BigDecimal.valueOf(newAgreement.getChargeDays()));
-                rentalAgreement.setPreDiscountCharge(newAgreement.getPreDiscountCharge());
-                rentalAgreement.setDiscountPercent(DataFormat.toPercentString(newAgreement.getDiscountPercent()));
-                rentalAgreement.setDiscountAmount(newAgreement.getDiscountAmount());
-                rentalAgreement.setFinalCharge(newAgreement.getFinalCharge());
-
+                RentalAgreement rentalAgreement  = rentalAgreementService.createRentalAgreement(body);
                 ResponseEntity<RentalAgreement> response = ResponseEntity.ok(rentalAgreement);
                 return response;
 

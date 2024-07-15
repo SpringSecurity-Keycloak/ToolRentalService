@@ -54,7 +54,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
             errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
         }
 
-        return handleExceptionInternal(ex,errors.toString(), headers, HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(ex,String.join(", ", errors), headers, HttpStatus.BAD_REQUEST, request);
     }
 
 }

@@ -1,11 +1,9 @@
 package io.rentalapp;
 
-import io.rentalapp.configuration.LocalDateConverter;
-import io.rentalapp.configuration.LocalDateTimeConverter;
+import io.rentalapp.api.configuration.LocalDateConverter;
+import io.rentalapp.api.configuration.LocalDateTimeConverter;
 import io.rentalapp.persist.ToolRentalPriceRepositorty;
 import io.rentalapp.persist.ToolRepository;
-import io.rentalapp.persist.model.ToolDTO;
-import io.rentalapp.persist.model.ToolRentalPriceDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +11,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import java.math.BigDecimal;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "io.rentalapp"})

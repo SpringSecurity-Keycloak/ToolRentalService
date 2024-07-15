@@ -1,4 +1,4 @@
-package io.rentalapp.configuration;
+package io.rentalapp.api.configuration;
 
 import com.fasterxml.jackson.datatype.threetenbp.ThreeTenModule;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

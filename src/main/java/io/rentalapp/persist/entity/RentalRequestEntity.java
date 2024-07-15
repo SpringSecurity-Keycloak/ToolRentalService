@@ -1,4 +1,4 @@
-package io.rentalapp.persist.model;
+package io.rentalapp.persist.entity;
 
 import io.rentalapp.common.BaseEntity;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "RentalRequest", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
-public class RentalRequestDTO extends BaseEntity {
+public class RentalRequestEntity extends BaseEntity {
 
     private String toolCode = null;
 
@@ -30,7 +30,7 @@ public class RentalRequestDTO extends BaseEntity {
     private Date checkoutDate = null;
 
     @OneToOne(fetch = FetchType.LAZY, orphanRemoval = false)
-    private RentalAgreementDTO rentalAgreement = null;
+    private RentalAgreementEntity rentalAgreement = null;
 
 
 }

@@ -1,7 +1,6 @@
-package io.rentalapp.persist.model;
+package io.rentalapp.persist.entity;
 
 import io.rentalapp.common.BaseEntity;
-import io.rentalapp.common.DecimalNumber;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "RentalAgreement", uniqueConstraints = {@UniqueConstraint(columnNames = {"rentalRequestId"})})
-public class RentalAgreementDTO extends BaseEntity {
+public class RentalAgreementEntity extends BaseEntity {
 
         private String toolCode = null;
 
@@ -45,6 +44,6 @@ public class RentalAgreementDTO extends BaseEntity {
 
         @OneToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "rentalRequest.id")
-        private RentalRequestDTO rentalRequest = null;
+        private RentalRequestEntity rentalRequest = null;
 
 }

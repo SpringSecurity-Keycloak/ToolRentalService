@@ -1,7 +1,7 @@
 package io.rentalapp.service;
 
 import io.rentalapp.common.DateRangeDetails;
-import io.rentalapp.persist.model.RentalAgreementDTO;
+import io.rentalapp.persist.entity.RentalAgreementEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +9,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,7 +22,7 @@ public class HolidayService {
      * @param rentalAgreement
      * @return
      */
-    public static List<LocalDate> getDateRange(RentalAgreementDTO rentalAgreement) {
+    public static List<LocalDate> getDateRange(RentalAgreementEntity rentalAgreement) {
         LocalDate startDate = rentalAgreement.getCheckoutDate().toInstant().atZone(ZoneId.of("America/Chicago")).toLocalDate();
         LocalDate endDate = rentalAgreement.getDueDate().toInstant().atZone(ZoneId.of("America/Chicago")).toLocalDate();
 

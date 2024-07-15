@@ -1,13 +1,9 @@
-package io.rentalapp.model;
+package io.rentalapp.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.rentalapp.common.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 

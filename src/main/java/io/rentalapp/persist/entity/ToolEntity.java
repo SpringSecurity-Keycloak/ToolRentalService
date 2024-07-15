@@ -1,4 +1,4 @@
-package io.rentalapp.persist.model;
+package io.rentalapp.persist.entity;
 
 import io.rentalapp.common.BaseEntity;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 @Entity(name = "Tool")
 @AllArgsConstructor
 @NoArgsConstructor
-public class ToolDTO extends BaseEntity {
+public class ToolEntity extends BaseEntity {
 
     private String code = null;
 

@@ -1,4 +1,4 @@
-package io.rentalapp.configuration;
+package io.rentalapp.api.configuration;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
