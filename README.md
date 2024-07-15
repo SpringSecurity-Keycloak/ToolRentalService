@@ -1,4 +1,4 @@
-[# Tool Rental App
+# Tool Rental App
 
 The Tool Rental App is a point-of-sale tool for a store, like Home Depot, that rents big tools.  The below functions have been implemented: 
 - Customers rent a tool for a specified number of days.
@@ -21,7 +21,7 @@ The underlying library integrating swagger to SpringBoot is [springdoc-openapi](
 ## Build Dependencies
 The service is built using
 - JDK 22
-- Spring Boot 3
+- Spring Boot 2.1.16
 - Open API 3.0
 
 ## Build and Run
