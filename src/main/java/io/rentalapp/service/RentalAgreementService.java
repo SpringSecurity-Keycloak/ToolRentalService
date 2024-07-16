@@ -12,7 +12,6 @@ import io.rentalapp.persist.entity.RentalAgreementEntity;
 import io.rentalapp.persist.entity.RentalRequestEntity;
 import io.rentalapp.persist.entity.ToolEntity;
 import io.rentalapp.persist.entity.ToolRentalPriceEntity;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +57,26 @@ public class RentalAgreementService implements IRentalAgreementService {
         Date checkoutDate = DataFormat.parseDate(rentalRequest.getCheckoutDate());
 
         /*
+         * Determine number of weekdays and holidays in the requested rental period
+         */
+        HolidayService holidayService = new HolidayService();
+        DateRangeDetails dateRangeDetails = holidayService.calculateDatesForRental(checkoutDate,rentalRequest.getRentailDaysCount());
+
+        /*
+         * Verify that the tool is available on the requested dates
+         */
+        Iterable<RentalAgreementEntity> existingAgreements = rentalAgreementRepository.findAllByToolCode(rentalRequest.getToolCode());
+        boolean isToolAvailableForRental = verifyToolIsAvailable(existingAgreements,dateRangeDetails);
+        if (!isToolAvailableForRental) {
+            throw new ValidationException("Tool is unavailable to rent for the requested dates");
+        }
+
+        /*
+         * Get pricing rules for requested tool
+         */
+        ToolRentalPriceEntity rentalPrice = getRentalPriceForTool(availableTools.get(rentalRequest.getToolCode()).getType());
+
+        /*
          * Save the rental request
          */
         RentalRequestEntity rentRequest = rentalRequestRepository
@@ -69,21 +88,10 @@ public class RentalAgreementService implements IRentalAgreementService {
                         .build());
 
         /*
-         * Determine number of weekdays and holidays in the requested rental period
-         */
-        HolidayService holidayService = new HolidayService();
-        DateRangeDetails dateRangeDetails = holidayService.calculateDatesForRental(checkoutDate,rentalRequest.getRentailDaysCount());
-
-        /*
-         * Get pricing rules for requested tool
-         */
-        ToolRentalPriceEntity rentalPrice = getRentalPriceForTool(availableTools.get(rentalRequest.getToolCode()).getType());
-
-        /*
          * Calculate the pricing based on the days requested and the pricing rules
          * for the tool and return a rental agreement
          */
-        RentalAgreementEntity rentalAgreementEntity = this.calculateRentalPrice(rentRequest,
+        RentalAgreementEntity rentalAgreementEntity = calculateRentalPrice(rentRequest,
                 dateRangeDetails,rentalPrice);
 
         /*
@@ -92,6 +100,7 @@ public class RentalAgreementService implements IRentalAgreementService {
         rentalAgreementEntity = rentalAgreementRepository.save(rentalAgreementEntity);
         RentalAgreement rentalAgreement = DataFormat.toRentalAgreement(rentalAgreementEntity);
         return rentalAgreement;
+
     }
 
     /**
@@ -105,23 +114,14 @@ public class RentalAgreementService implements IRentalAgreementService {
                                                        DateRangeDetails dateRangeDetails,
                                                        ToolRentalPriceEntity rentalPrice) {
 
-        Iterable<RentalAgreementEntity> existingAgreements = rentalAgreementRepository.findAllByToolCode(rentalRequest.getToolCode());
-
-        boolean isToolAvailableForRental = this.isToolAvailableForRent(existingAgreements,dateRangeDetails);
-        if (!isToolAvailableForRental) {
-            throw new ValidationException("Tool is unavailable to rent for the requested dates");
-        }
-
         double preDiscountCharge = 0;
         int rentalDays = dateRangeDetails.getTotalWeekDays() + dateRangeDetails.getTotalWeekendDays() + dateRangeDetails.getTotalHolidays();
         int chargeDays = rentalDays;
 
-        long weekendCharge = 0;
         if (!rentalPrice.isWeekEndChargeable()) {
             chargeDays = chargeDays - dateRangeDetails.getTotalWeekendDays();
         }
 
-        long holidayCharge = 0;
         if (!rentalPrice.isHolidayChargeable()) {
             chargeDays = chargeDays - dateRangeDetails.getTotalHolidays();
         }
@@ -156,7 +156,7 @@ public class RentalAgreementService implements IRentalAgreementService {
      * @param requestedRentalDates
      * @return true if the tool is not checked out for the requested checkout date, false otherwise
      */
-    private boolean isToolAvailableForRent(Iterable<RentalAgreementEntity> existingAgreements, DateRangeDetails requestedRentalDates) {
+    private boolean verifyToolIsAvailable(Iterable<RentalAgreementEntity> existingAgreements, DateRangeDetails requestedRentalDates) {
         boolean toolIsAvailableForRental = false;
         final List<LocalDate> checkedOutDates = new ArrayList<LocalDate>();
         existingAgreements.forEach(rentalAgreement -> checkedOutDates.addAll(HolidayService.getDateRange(rentalAgreement)));

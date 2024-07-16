@@ -19,8 +19,10 @@ import static org.junit.Assert.assertEquals;
 @TestPropertySource(
         locations = "classpath:application.properties")
 public class RentalAgreementServiceLADWTestCase {
+
     @Autowired
     RentalAgreementService rentalAgreementService;
+
     double price = 1.99;
 
     @Test
