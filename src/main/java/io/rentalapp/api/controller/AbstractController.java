@@ -5,6 +5,7 @@ import io.rentalapp.api.ApiApi;
 import io.rentalapp.api.model.*;
 import io.rentalapp.common.ValidationException;
 import io.rentalapp.service.HolidayService;
+import io.rentalapp.service.IRentalAgreementService;
 import io.rentalapp.service.RentalAgreementService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -40,7 +41,7 @@ public class AbstractController implements ApiApi {
     private HolidayService holidayService = new HolidayService();
 
     @Autowired
-    RentalAgreementService rentalAgreementService;
+    IRentalAgreementService rentalAgreementService;
 
     /**
      *

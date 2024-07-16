@@ -11,6 +11,7 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class HolidayService {
@@ -46,14 +47,16 @@ public class HolidayService {
 
         LocalDate startDate = checkoutDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate endDate = LocalDate.from(startDate);
-        endDate = endDate.plusDays(checkoutDays+1);
+        endDate = endDate.plusDays(checkoutDays);
 
         final DateRangeDetails rentalPeriod = new DateRangeDetails();
         Set<DayOfWeek> weekend = EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
 
+        AtomicReference<LocalDate> prevDay = new AtomicReference<LocalDate>();
         startDate.datesUntil(endDate)
                 .forEach(rentalDay -> {
                     rentalPeriod.getDateRange().add(rentalDay);
+                    rentalPeriod.setDueDate(Date.from(rentalDay.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
                     boolean isWeekend = weekend.contains(rentalDay.getDayOfWeek());
                     boolean isHoliday = HolidayService.isHoliday(rentalDay);
 
@@ -62,15 +65,30 @@ public class HolidayService {
                         rentalPeriod.setTotalWeekendDays(++totalWeekendDays);
                     }
 
-                    if (isHoliday) {
+                    /*
+                     * if current date is a holiday and does not fall on a weekend, add it to the holiday count
+                     */
+                    if (isHoliday && !isWeekend) {
                         int totalHolidays = rentalPeriod.getTotalHolidays();
                         rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
 
+                    /*
+                     * if the previous day was a holiday and falls on a weekend, increment holiday count
+                     */
+                    if (prevDay.get() != null) {
+                        if (weekend.contains(prevDay.get().getDayOfWeek()) && HolidayService.isHoliday(prevDay.get())) {
+                            int totalHolidays = rentalPeriod.getTotalHolidays();
+                            rentalPeriod.setTotalHolidays(++totalHolidays);
+                        }
+
+                    }
+                    prevDay.set(rentalDay);
+
                 });
 
         rentalPeriod.setTotalWeekDays(
-                checkoutDays
+                rentalPeriod.getDateRange().size()
                 - (rentalPeriod.getTotalWeekendDays() + rentalPeriod.getTotalHolidays()) );
 
         return rentalPeriod;

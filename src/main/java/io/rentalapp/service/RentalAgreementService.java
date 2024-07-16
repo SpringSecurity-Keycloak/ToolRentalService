@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class RentalAgreementService {
+public class RentalAgreementService implements IRentalAgreementService {
 
     private static final Logger log = LoggerFactory.getLogger(RentalAgreementService.class);
 
@@ -56,7 +56,6 @@ public class RentalAgreementService {
         }
 
         Date checkoutDate = DataFormat.parseDate(rentalRequest.getCheckoutDate());
-        Date rentalDueDate = DateUtils.addDays(checkoutDate,rentalRequest.getRentailDaysCount());
 
         /*
          * Save the rental request
@@ -85,9 +84,7 @@ public class RentalAgreementService {
          * for the tool and return a rental agreement
          */
         RentalAgreementEntity rentalAgreementEntity = this.calculateRentalPrice(rentRequest,
-                dateRangeDetails,
-                rentalPrice,
-                rentalDueDate);
+                dateRangeDetails,rentalPrice);
 
         /*
          * Save the rental agreement
@@ -106,8 +103,7 @@ public class RentalAgreementService {
      */
     private RentalAgreementEntity calculateRentalPrice(RentalRequestEntity rentalRequest,
                                                        DateRangeDetails dateRangeDetails,
-                                                       ToolRentalPriceEntity rentalPrice,
-                                                       Date rentalDueDate) {
+                                                       ToolRentalPriceEntity rentalPrice) {
 
         Iterable<RentalAgreementEntity> existingAgreements = rentalAgreementRepository.findAllByToolCode(rentalRequest.getToolCode());
 
@@ -122,13 +118,11 @@ public class RentalAgreementService {
 
         long weekendCharge = 0;
         if (!rentalPrice.isWeekEndChargeable()) {
-            //weekendCharge = dateRangeDetails.getTotalWeekendDays() * rentalPrice.getDailyCharge().longValue();
             chargeDays = chargeDays - dateRangeDetails.getTotalWeekendDays();
         }
 
         long holidayCharge = 0;
         if (!rentalPrice.isHolidayChargeable()) {
-            //holidayCharge = dateRangeDetails.getTotalHolidays() * rentalPrice.getDailyCharge().longValue();
             chargeDays = chargeDays - dateRangeDetails.getTotalHolidays();
         }
 
@@ -144,7 +138,7 @@ public class RentalAgreementService {
                 .toolType(rentalPrice.getToolType())
                 .toolBrand(availableTools.get(rentalRequest.getToolCode()).getBrand())
                 .checkoutDate(rentalRequest.getCheckoutDate())
-                .dueDate(rentalDueDate)
+                .dueDate(dateRangeDetails.getDueDate())
                 .rentalRequest(rentalRequest)
                 .dailyCharge(rentalPrice.getDailyCharge())
                 .chargeDays(Integer.valueOf(chargeDays))

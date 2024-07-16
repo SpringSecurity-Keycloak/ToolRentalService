@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,4 +22,5 @@ public class DateRangeDetails {
     Integer totalWeekendDays  = Integer.valueOf(0);
     Integer totalHolidays = Integer.valueOf(0);
     List<LocalDate> dateRange = new ArrayList<LocalDate>();
+    Date dueDate = null;
 }

@@ -55,7 +55,7 @@ public class BootStrap {
                     ,true,
                     false,
                     true));
-            toolRentalPriceRepositorty.save(new ToolRentalPriceEntity("Chainsaw"
+            toolRentalPriceRepositorty.save(new ToolRentalPriceEntity("Jackhammer"
                     , BigDecimal.valueOf(2.99)
                     ,true,
                     false,
