@@ -33,14 +33,14 @@ public class Weekend implements IHoliday{
     /**
      * Check if the holiday falls on a weekday
      * * @param date
-     * * @return true if the date is an observed holiday and falls on a weekday, false otherwise
+     * * @return true if the date is on a weekday, false otherwise
      *
      * @param date
      * @return
      */
     @Override
     public boolean isWeekday(LocalDate date) {
-        return false;
+        return isHoliday(date);
     }
 
 }

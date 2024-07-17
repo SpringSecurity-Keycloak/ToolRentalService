@@ -2,6 +2,7 @@ package io.rentalapp.service;
 
 import io.rentalapp.common.DataFormat;
 import io.rentalapp.common.DateRangeDetails;
+import io.rentalapp.holiday.IHoliday;
 import io.rentalapp.holiday.ObservedHoliday;
 import io.rentalapp.holiday.Weekend;
 import io.rentalapp.persist.entity.RentalAgreementEntity;
@@ -50,37 +51,42 @@ public class RentalDurationService {
         LocalDate endDate = LocalDate.from(startDate);
         endDate = endDate.plusDays(checkoutDays);
 
-        final DateRangeDetails rentalPeriod = new DateRangeDetails();
-        Weekend weekend = new Weekend();
-        ObservedHoliday observedHoliday = new ObservedHoliday();
+        DateRangeDetails rentalPeriod = new DateRangeDetails();
+        IHoliday observedHoliday = new ObservedHoliday();
+        Weekend weekendCheck = new Weekend();
 
         startDate.datesUntil(endDate)
-                .forEach(rentalDay -> {
-                    rentalPeriod.getDateRange().add(rentalDay);
-                    rentalPeriod.setDueDate(DataFormat.toDate(rentalDay));
+                .forEach(currentDate -> {
+                    rentalPeriod.getDateRange().add(currentDate);
+                    rentalPeriod.setDueDate(DataFormat.toDate(currentDate));
+                    LocalDate prevDay = currentDate.minus(Period.ofDays(1));
 
-                    if (weekend.isWeekend(rentalDay)) {
+                    if (weekendCheck.isWeekend(currentDate)) {
                         int totalWeekendDays = rentalPeriod.getTotalWeekendDays();
                         rentalPeriod.setTotalWeekendDays(++totalWeekendDays);
                     }
 
                     /*
-                     * if current date is a holiday and does not fall on a weekend, add it to the holiday count
+                     * if current date is a holiday that falls on a weekday, add it to the holiday count
                      */
-                    if (observedHoliday.isWeekday(rentalDay)) {
-                        int totalHolidays = rentalPeriod.getTotalHolidays();
+                    int totalHolidays = rentalPeriod.getTotalHolidays();
+                    if (observedHoliday.isWeekday(currentDate)) {
                         rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
 
-                    LocalDate prevDay = rentalDay.minus(Period.ofDays(1));
+                    if (prevDay.isBefore(startDate)) {
+                        //out of range
+                        return;
+                    }
 
-                    /*
-                     * if the previous day was a holiday and falls on a weekend, increment holiday count
-                     */
-                    if (rentalPeriod.getDateRange().contains(prevDay) && observedHoliday.isWeekend(prevDay)) {
-                        int totalHolidays = rentalPeriod.getTotalHolidays();
+                    if (observedHoliday.isWeekend(currentDate) && !weekendCheck.isWeekend(prevDay)) {
                         rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
+
+                    if (observedHoliday.isWeekend(prevDay) && !weekendCheck.isWeekend(currentDate)) {
+                        rentalPeriod.setTotalHolidays(++totalHolidays);
+                    }
+
 
                 });
 
