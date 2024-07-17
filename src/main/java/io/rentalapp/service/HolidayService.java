@@ -1,6 +1,8 @@
 package io.rentalapp.service;
 
 import io.rentalapp.common.DateRangeDetails;
+import io.rentalapp.holiday.ObservedHoliday;
+import io.rentalapp.holiday.Weekend;
 import io.rentalapp.persist.entity.RentalAgreementEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,15 +52,16 @@ public class HolidayService {
         endDate = endDate.plusDays(checkoutDays);
 
         final DateRangeDetails rentalPeriod = new DateRangeDetails();
-        Set<DayOfWeek> weekend = EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
-
+        Weekend weekend = new Weekend();
+        ObservedHoliday observedHoliday = new ObservedHoliday();
         AtomicReference<LocalDate> prevDay = new AtomicReference<LocalDate>();
+
         startDate.datesUntil(endDate)
                 .forEach(rentalDay -> {
                     rentalPeriod.getDateRange().add(rentalDay);
                     rentalPeriod.setDueDate(Date.from(rentalDay.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-                    boolean isWeekend = weekend.contains(rentalDay.getDayOfWeek());
-                    boolean isHoliday = HolidayService.isHoliday(rentalDay);
+                    boolean isWeekend = weekend.isHoliday(rentalDay);
+                    boolean isHoliday = observedHoliday.isHoliday(rentalDay);
 
                     if (isWeekend) {
                         int totalWeekendDays = rentalPeriod.getTotalWeekendDays();
@@ -77,7 +80,7 @@ public class HolidayService {
                      * if the previous day was a holiday and falls on a weekend, increment holiday count
                      */
                     if (prevDay.get() != null) {
-                        if (weekend.contains(prevDay.get().getDayOfWeek()) && HolidayService.isHoliday(prevDay.get())) {
+                        if (weekend.isHoliday(prevDay.get()) && observedHoliday.isHoliday(prevDay.get())) {
                             int totalHolidays = rentalPeriod.getTotalHolidays();
                             rentalPeriod.setTotalHolidays(++totalHolidays);
                         }
@@ -93,49 +96,5 @@ public class HolidayService {
 
         return rentalPeriod;
     }
-
-    /**
-     * Helper function to check if a given date falls on Labor Day
-     * @param date
-     * @return true if the date is a labor day date
-     */
-    static final boolean isLaborDay(LocalDate date) {
-        LocalDate laborDay = LocalDate.of(date.getYear(), date.getMonth(), 1)
-                .with(TemporalAdjusters.dayOfWeekInMonth(1, DayOfWeek.MONDAY));
-
-        boolean isLaborDay = (date.getDayOfYear() == laborDay.getDayOfYear() && date.getMonth() == Month.SEPTEMBER);
-        if (isLaborDay) {
-            log.info(laborDay.toString());
-            log.info("is labor day : " + isLaborDay);
-        }
-        return isLaborDay;
-    }
-
-    /**
-     * Helper function to check if a given date falls on Independence Day
-     * @param date
-     * @return true if the date is a Independence day date
-     */
-    static final boolean isIndependenceDay(LocalDate date) {
-        boolean isIndependenceDay = (date.getMonth() == Month.JULY && date.getDayOfMonth() == 4);
-        if (isIndependenceDay) {
-            log.info(date.toString());
-            log.info("is Independence day : " + isIndependenceDay);
-        }
-        return isIndependenceDay;
-    }
-
-    /**
-     * Check if the passed in date falls under an observed holiday
-     * @param date
-     * @return
-     */
-    static final boolean isHoliday(LocalDate date) {
-        return isIndependenceDay(date) || isLaborDay(date);
-    }
-
-
-
-
 
 }
