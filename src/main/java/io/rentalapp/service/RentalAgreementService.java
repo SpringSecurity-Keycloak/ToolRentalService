@@ -59,8 +59,8 @@ public class RentalAgreementService implements IRentalAgreementService {
         /*
          * Determine number of weekdays and holidays in the requested rental period
          */
-        HolidayService holidayService = new HolidayService();
-        DateRangeDetails dateRangeDetails = holidayService.calculateDatesForRental(checkoutDate,rentalRequest.getRentailDaysCount());
+        RentalDurationService rentalDurationService = new RentalDurationService();
+        DateRangeDetails dateRangeDetails = rentalDurationService.calculateDatesForRental(checkoutDate,rentalRequest.getRentailDaysCount());
 
         /*
          * Verify that the tool is available on the requested dates
@@ -159,7 +159,7 @@ public class RentalAgreementService implements IRentalAgreementService {
     private boolean verifyToolIsAvailable(Iterable<RentalAgreementEntity> existingAgreements, DateRangeDetails requestedRentalDates) {
         boolean toolIsAvailableForRental = false;
         final List<LocalDate> checkedOutDates = new ArrayList<LocalDate>();
-        existingAgreements.forEach(rentalAgreement -> checkedOutDates.addAll(HolidayService.getDateRange(rentalAgreement)));
+        existingAgreements.forEach(rentalAgreement -> checkedOutDates.addAll(RentalDurationService.getDateRange(rentalAgreement)));
 
         List<LocalDate> requestedDates = requestedRentalDates.getDateRange();
 

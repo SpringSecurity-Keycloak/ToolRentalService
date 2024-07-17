@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rentalapp.api.ApiApi;
 import io.rentalapp.api.model.*;
 import io.rentalapp.common.ValidationException;
-import io.rentalapp.service.HolidayService;
+import io.rentalapp.service.RentalDurationService;
 import io.rentalapp.service.IRentalAgreementService;
-import io.rentalapp.service.RentalAgreementService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,7 +37,7 @@ public class AbstractController implements ApiApi {
 
     private final HttpServletRequest request;
 
-    private HolidayService holidayService = new HolidayService();
+    private RentalDurationService holidayService = new RentalDurationService();
 
     @Autowired
     IRentalAgreementService rentalAgreementService;

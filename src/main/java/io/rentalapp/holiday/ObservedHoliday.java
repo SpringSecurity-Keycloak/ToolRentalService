@@ -18,4 +18,29 @@ public class ObservedHoliday implements IHoliday{
         return observedHolidays.stream().anyMatch(holiday -> holiday.isHoliday(date));
     }
 
+    /**
+     * Check if the holiday falls on a weekend
+     *
+     * @param date
+     * @return true if the date is an observed holiday and falls on a weekend, false otherwise
+     */
+    @Override
+    public boolean isWeekend(LocalDate date) {
+        boolean isWeekend =  observedHolidays.stream().anyMatch(holiday ->  holiday.isWeekend(date));
+        return isWeekend;
+    }
+
+    /**
+     * Check if the holiday falls on a weekday
+     * * @param date
+     * * @return true if the date is an observed holiday and falls on a weekday, false otherwise
+     *
+     * @param date
+     * @return
+     */
+    @Override
+    public boolean isWeekday(LocalDate date) {
+        return observedHolidays.stream().anyMatch(holiday ->  holiday.isWeekday(date));
+    }
+
 }

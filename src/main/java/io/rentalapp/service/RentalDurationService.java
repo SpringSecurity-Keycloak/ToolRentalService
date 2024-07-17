@@ -1,5 +1,6 @@
 package io.rentalapp.service;
 
+import io.rentalapp.common.DataFormat;
 import io.rentalapp.common.DateRangeDetails;
 import io.rentalapp.holiday.ObservedHoliday;
 import io.rentalapp.holiday.Weekend;
@@ -7,18 +8,16 @@ import io.rentalapp.persist.entity.RentalAgreementEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.Month;
+import java.time.Period;
 import java.time.ZoneId;
-import java.time.temporal.TemporalAdjusters;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class HolidayService {
+public class RentalDurationService {
 
-    private static final Logger log = LoggerFactory.getLogger(HolidayService.class);
+    private static final Logger log = LoggerFactory.getLogger(RentalDurationService.class);
 
     /**
      * Get a range of dates for the passed in rental Agreement
@@ -54,16 +53,13 @@ public class HolidayService {
         final DateRangeDetails rentalPeriod = new DateRangeDetails();
         Weekend weekend = new Weekend();
         ObservedHoliday observedHoliday = new ObservedHoliday();
-        AtomicReference<LocalDate> prevDay = new AtomicReference<LocalDate>();
 
         startDate.datesUntil(endDate)
                 .forEach(rentalDay -> {
                     rentalPeriod.getDateRange().add(rentalDay);
-                    rentalPeriod.setDueDate(Date.from(rentalDay.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-                    boolean isWeekend = weekend.isHoliday(rentalDay);
-                    boolean isHoliday = observedHoliday.isHoliday(rentalDay);
+                    rentalPeriod.setDueDate(DataFormat.toDate(rentalDay));
 
-                    if (isWeekend) {
+                    if (weekend.isWeekend(rentalDay)) {
                         int totalWeekendDays = rentalPeriod.getTotalWeekendDays();
                         rentalPeriod.setTotalWeekendDays(++totalWeekendDays);
                     }
@@ -71,22 +67,20 @@ public class HolidayService {
                     /*
                      * if current date is a holiday and does not fall on a weekend, add it to the holiday count
                      */
-                    if (isHoliday && !isWeekend) {
+                    if (observedHoliday.isWeekday(rentalDay)) {
                         int totalHolidays = rentalPeriod.getTotalHolidays();
                         rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
 
+                    LocalDate prevDay = rentalDay.minus(Period.ofDays(1));
+
                     /*
                      * if the previous day was a holiday and falls on a weekend, increment holiday count
                      */
-                    if (prevDay.get() != null) {
-                        if (weekend.isHoliday(prevDay.get()) && observedHoliday.isHoliday(prevDay.get())) {
-                            int totalHolidays = rentalPeriod.getTotalHolidays();
-                            rentalPeriod.setTotalHolidays(++totalHolidays);
-                        }
-
+                    if (rentalPeriod.getDateRange().contains(prevDay) && observedHoliday.isWeekend(prevDay)) {
+                        int totalHolidays = rentalPeriod.getTotalHolidays();
+                        rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
-                    prevDay.set(rentalDay);
 
                 });
 

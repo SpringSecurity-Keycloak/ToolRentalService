@@ -19,4 +19,28 @@ public class Weekend implements IHoliday{
         return weekend.contains(date.getDayOfWeek());
     }
 
+    /**
+     * Check if the holiday falls on a weekend
+     *
+     * @param date
+     * @return true if the date is an observed holiday and falls on a weekend, false otherwise
+     */
+    @Override
+    public boolean isWeekend(LocalDate date) {
+        return isHoliday(date);
+    }
+
+    /**
+     * Check if the holiday falls on a weekday
+     * * @param date
+     * * @return true if the date is an observed holiday and falls on a weekday, false otherwise
+     *
+     * @param date
+     * @return
+     */
+    @Override
+    public boolean isWeekday(LocalDate date) {
+        return false;
+    }
+
 }

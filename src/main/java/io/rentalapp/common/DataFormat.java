@@ -8,6 +8,8 @@ import io.rentalapp.persist.entity.ToolEntity;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 
@@ -42,6 +44,14 @@ public class DataFormat {
         return formatter.format(date);
     }
 
+    /**
+     * Convert java.time.LocalDate to java.util.date
+     * @param date
+     * @return
+     */
+    public static Date toDate(LocalDate date) {
+      return Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()) ;
+    }
     /**
      * Return a string value of the format ###%
      * @param value
