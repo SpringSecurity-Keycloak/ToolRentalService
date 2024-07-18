@@ -8,6 +8,8 @@ public class ObservedHoliday implements IHoliday{
             new FourthJuly(),
             new LaborDay());
 
+    private Weekend weekendCheck = new Weekend();
+
     /**
      * Check if the passed in date falls on an observed holiday in the system
      * @param date the date to check
@@ -41,6 +43,28 @@ public class ObservedHoliday implements IHoliday{
     @Override
     public boolean isWeekday(LocalDate date) {
         return observedHolidays.stream().anyMatch(holiday ->  holiday.isWeekday(date));
+    }
+
+    /**
+     * Check if the current date is weekend and the previous day is a weekday
+     * @param currentDate
+     * @param prevDay
+     * @param startDate
+     * @return
+     */
+    public boolean isObservedOnPrevWeekDay(LocalDate currentDate, LocalDate prevDay, LocalDate startDate) {
+        return isWeekend(currentDate) && !weekendCheck.isWeekend(prevDay) && !prevDay.isBefore(startDate);
+    }
+
+    /**
+     * Check if the current date is weekend and the next day is a weekday
+     * @param currentDate
+     * @param nextDay
+     * @param endDate
+     * @return
+     */
+    public boolean isObservedOnNextWeekDay(LocalDate currentDate, LocalDate nextDay, LocalDate endDate) {
+        return isWeekend(currentDate) && !weekendCheck.isWeekday(nextDay) && !nextDay.equals(endDate);
     }
 
 }

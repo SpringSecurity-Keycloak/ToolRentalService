@@ -2,11 +2,9 @@ package io.rentalapp.service;
 
 import io.rentalapp.common.DataFormat;
 import io.rentalapp.common.DateRangeDetails;
-import io.rentalapp.holiday.IHoliday;
 import io.rentalapp.holiday.ObservedHoliday;
 import io.rentalapp.holiday.Weekend;
 import io.rentalapp.persist.entity.RentalAgreementEntity;
-import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +18,7 @@ public class RentalDurationService {
 
     private static final Logger log = LoggerFactory.getLogger(RentalDurationService.class);
     private Weekend weekendCheck = new Weekend();
-    private IHoliday observedHoliday = new ObservedHoliday();
+    private ObservedHoliday observedHoliday = new ObservedHoliday();
 
     /**
      * Get a range of dates for the passed in rental Agreement
@@ -79,8 +77,8 @@ public class RentalDurationService {
                      * if the current date is a weekend and an observed holiday, it is
                      * observed on the previous weekday or the following weekday
                      */
-                    if (isNextDayHoiday(currentDate,nextDay,endDate)
-                    || isPrevDayHoliday(currentDate, prevDay,startDate)) {
+                    if (observedHoliday.isObservedOnNextWeekDay(currentDate,nextDay,endDate)
+                    || observedHoliday.isObservedOnPrevWeekDay(currentDate, prevDay,startDate)) {
                         rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
 
@@ -91,27 +89,6 @@ public class RentalDurationService {
                 - (rentalPeriod.getTotalWeekendDays() + rentalPeriod.getTotalHolidays()) );
 
         return rentalPeriod;
-    }
-
-    /**
-     * Check if the current date is weekend and the previous day is a weekday
-     * @param currentDate
-     * @param prevDay
-     * @param startDate
-     * @return
-     */
-    private boolean isPrevDayHoliday(LocalDate currentDate,  LocalDate prevDay, LocalDate startDate) {
-        return observedHoliday.isWeekend(currentDate) && !weekendCheck.isWeekend(prevDay) && !prevDay.isBefore(startDate);
-    }
-    /**
-     * Check if the current date is weekend and the next day is a weekday
-     * @param currentDate
-     * @param nextDay
-     * @param endDate
-     * @return
-     */
-    private boolean isNextDayHoiday(LocalDate currentDate, LocalDate nextDay, LocalDate endDate) {
-        return observedHoliday.isWeekend(currentDate) && !weekendCheck.isWeekday(nextDay) && !nextDay.equals(endDate);
     }
 
 }
