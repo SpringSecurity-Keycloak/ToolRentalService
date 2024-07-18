@@ -46,25 +46,38 @@ public class ObservedHoliday implements IHoliday{
     }
 
     /**
-     * Check if the current date is weekend and the previous day is a weekday
+     *
      * @param currentDate
-     * @param prevDay
-     * @param startDate
      * @return
      */
-    public boolean isObservedOnPrevWeekDay(LocalDate currentDate, LocalDate prevDay, LocalDate startDate) {
-        return isWeekend(currentDate) && !weekendCheck.isWeekend(prevDay) && !prevDay.isBefore(startDate);
+    public LocalDate getActualDate(LocalDate currentDate) {
+        LocalDate adjustedDate = LocalDate.from(currentDate);
+
+        adjustedDate = isObservedOnNextWeekDay(currentDate) ? adjustedDate.plusDays(1) : adjustedDate;
+        adjustedDate = isObservedOnPrevWeekDay(currentDate) ? adjustedDate.minusDays(1) : adjustedDate;
+
+        return adjustedDate;
+    }
+
+    /**
+     * Check if the current date is weekend and the previous day is a weekday
+     * @param currentDate
+     * @return
+     */
+    private boolean isObservedOnPrevWeekDay(LocalDate currentDate) {
+        LocalDate prevDay = currentDate.minusDays(1);
+        return isWeekend(currentDate) && !weekendCheck.isWeekend(prevDay) ;
     }
 
     /**
      * Check if the current date is weekend and the next day is a weekday
      * @param currentDate
-     * @param nextDay
-     * @param endDate
      * @return
      */
-    public boolean isObservedOnNextWeekDay(LocalDate currentDate, LocalDate nextDay, LocalDate endDate) {
-        return isWeekend(currentDate) && !weekendCheck.isWeekday(nextDay) && !nextDay.equals(endDate);
+    private boolean isObservedOnNextWeekDay(LocalDate currentDate) {
+        LocalDate nextDay = currentDate.plusDays(1);
+        return isWeekend(currentDate) && !weekendCheck.isWeekday(nextDay) ;
     }
+
 
 }
