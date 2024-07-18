@@ -6,11 +6,11 @@ import io.rentalapp.holiday.IHoliday;
 import io.rentalapp.holiday.ObservedHoliday;
 import io.rentalapp.holiday.Weekend;
 import io.rentalapp.persist.entity.RentalAgreementEntity;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 public class RentalDurationService {
 
     private static final Logger log = LoggerFactory.getLogger(RentalDurationService.class);
+    private Weekend weekendCheck = new Weekend();
+    private IHoliday observedHoliday = new ObservedHoliday();
 
     /**
      * Get a range of dates for the passed in rental Agreement
@@ -48,18 +50,17 @@ public class RentalDurationService {
     public DateRangeDetails calculateDatesForRental(Date checkoutDate, int checkoutDays) {
 
         LocalDate startDate = checkoutDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate endDate = LocalDate.from(startDate);
-        endDate = endDate.plusDays(checkoutDays);
-
+        LocalDate endDate = LocalDate.from(startDate).plusDays(checkoutDays);
         DateRangeDetails rentalPeriod = new DateRangeDetails();
-        IHoliday observedHoliday = new ObservedHoliday();
-        Weekend weekendCheck = new Weekend();
 
         startDate.datesUntil(endDate)
                 .forEach(currentDate -> {
+
                     rentalPeriod.getDateRange().add(currentDate);
                     rentalPeriod.setDueDate(DataFormat.toDate(currentDate));
-                    LocalDate prevDay = currentDate.minus(Period.ofDays(1));
+
+                    LocalDate prevDay = currentDate.minusDays(1);
+                    LocalDate nextDay = currentDate.plusDays(1);
 
                     if (weekendCheck.isWeekend(currentDate)) {
                         int totalWeekendDays = rentalPeriod.getTotalWeekendDays();
@@ -74,19 +75,14 @@ public class RentalDurationService {
                         rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
 
-                    if (prevDay.isBefore(startDate)) {
-                        //out of range
-                        return;
-                    }
-
-                    if (observedHoliday.isWeekend(currentDate) && !weekendCheck.isWeekend(prevDay)) {
+                    /*
+                     * if the current date is a weekend and an observed holiday, it is
+                     * observed on the previous weekday or the following weekday
+                     */
+                    if (isNextDayHoiday(currentDate,nextDay,endDate)
+                    || isPrevDayHoliday(currentDate, prevDay,startDate)) {
                         rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
-
-                    if (observedHoliday.isWeekend(prevDay) && !weekendCheck.isWeekend(currentDate)) {
-                        rentalPeriod.setTotalHolidays(++totalHolidays);
-                    }
-
 
                 });
 
@@ -95,6 +91,27 @@ public class RentalDurationService {
                 - (rentalPeriod.getTotalWeekendDays() + rentalPeriod.getTotalHolidays()) );
 
         return rentalPeriod;
+    }
+
+    /**
+     * Check if the current date is weekend and the previous day is a weekday
+     * @param currentDate
+     * @param prevDay
+     * @param startDate
+     * @return
+     */
+    private boolean isPrevDayHoliday(LocalDate currentDate,  LocalDate prevDay, LocalDate startDate) {
+        return observedHoliday.isWeekend(currentDate) && !weekendCheck.isWeekend(prevDay) && !prevDay.isBefore(startDate);
+    }
+    /**
+     * Check if the current date is weekend and the next day is a weekday
+     * @param currentDate
+     * @param nextDay
+     * @param endDate
+     * @return
+     */
+    private boolean isNextDayHoiday(LocalDate currentDate, LocalDate nextDay, LocalDate endDate) {
+        return observedHoliday.isWeekend(currentDate) && !weekendCheck.isWeekday(nextDay) && !nextDay.equals(endDate);
     }
 
 }
