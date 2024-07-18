@@ -60,24 +60,20 @@ public class RentalDurationService {
                     LocalDate prevDay = currentDate.minusDays(1);
                     LocalDate nextDay = currentDate.plusDays(1);
 
+                    /**
+                     * Update weekend count
+                     */
                     if (weekendCheck.isWeekend(currentDate)) {
                         int totalWeekendDays = rentalPeriod.getTotalWeekendDays();
                         rentalPeriod.setTotalWeekendDays(++totalWeekendDays);
                     }
 
-                    /*
-                     * if current date is a holiday that falls on a weekday, add it to the holiday count
+                    /**
+                     * Update holiday count
                      */
                     int totalHolidays = rentalPeriod.getTotalHolidays();
-                    if (observedHoliday.isWeekday(currentDate)) {
-                        rentalPeriod.setTotalHolidays(++totalHolidays);
-                    }
-
-                    /*
-                     * if the current date is a weekend and an observed holiday, it is
-                     * observed on the previous weekday or the following weekday
-                     */
-                    if (observedHoliday.isObservedOnNextWeekDay(currentDate,nextDay,endDate)
+                    if (observedHoliday.isWeekday(currentDate)
+                    || observedHoliday.isObservedOnNextWeekDay(currentDate,nextDay,endDate)
                     || observedHoliday.isObservedOnPrevWeekDay(currentDate, prevDay,startDate)) {
                         rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
