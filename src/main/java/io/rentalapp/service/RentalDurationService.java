@@ -84,9 +84,8 @@ public class RentalDurationService {
 
                 });
 
-        rentalPeriod.setTotalWeekDays(
-                rentalPeriod.getDateRange().size()
-                - (rentalPeriod.getTotalWeekendDays() + rentalPeriod.getTotalHolidays()) );
+        int totalWeekDays = rentalPeriod.getDateRange().size() - (rentalPeriod.getTotalWeekendDays() + rentalPeriod.getTotalHolidays());
+        rentalPeriod.setTotalWeekDays(totalWeekDays);
 
         return rentalPeriod;
     }
