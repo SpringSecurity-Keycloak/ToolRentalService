@@ -41,4 +41,4 @@ http://localhost:3000/
 Change default port value in application.properties]()
 
 ## Postman Collection
-The Postman collection to test this service is available [here](https://github.com/SpringSecurity-Keycloak/ToolRentalService/blob/master/src/main/resources/openapi.yaml)
+The Postman collection to test this service is available [here](https://github.com/SpringSecurity-Keycloak/ToolRentalService/blob/master/src/main/resources/ToolRentalApi.postman_collection.json)
