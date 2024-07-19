@@ -1,0 +1,301 @@
+{
+	"info": {
+		"_postman_id": "e6d348b9-9139-49b8-b8db-4b5fcc8eef88",
+		"name": "ToolRentalApi",
+		"description": "An API to facilitate the rental of tools",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "27387575"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "v1",
+					"item": [
+						{
+							"name": "tool",
+							"item": [
+								{
+									"name": "{code}",
+									"item": [
+										{
+											"name": "checkout",
+											"item": [
+												{
+													"name": "Create a rental agreement",
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															},
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"checkout_date\": \"<string>\",\n  \"rental_days_count\": \"<integer>\",\n  \"tool_code\": \"<string>\",\n  \"discount_percent\": \"<integer>\"\n}",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/v1/tool/:code/checkout",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"v1",
+																"tool",
+																":code",
+																"checkout"
+															],
+															"variable": [
+																{
+																	"key": "code",
+																	"value": "<string>",
+																	"description": "(Required) "
+																}
+															]
+														}
+													},
+													"response": [
+														{
+															"name": "CreateRentalAgreement",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n  \"checkout_date\": \"<string>\",\n  \"rental_days_count\": \"<integer>\",\n  \"tool_code\": \"<string>\",\n  \"discount_percent\": \"<integer>\"\n}",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1/tool/:code/checkout",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1",
+																		"tool",
+																		":code",
+																		"checkout"
+																	],
+																	"variable": [
+																		{
+																			"key": "code"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"checkout_date\": \"<string>\",\n  \"tool_code\": \"<string>\",\n  \"tool_type\": \"<string>\",\n  \"tool_brand\": \"<string>\",\n  \"rental_days\": \"<string>\",\n  \"due_date\": \"<string>\",\n  \"daily_charge\": \"<number>\",\n  \"charge_days\": \"<number>\",\n  \"pre_discount_charge\": \"<number>\",\n  \"discount_percent\": \"<string>\",\n  \"discount_amount\": \"<number>\",\n  \"final_charge\": \"<number>\"\n}"
+														}
+													]
+												}
+											]
+										},
+										{
+											"name": "Get pricing details",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/tool/:code",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"tool",
+														":code"
+													],
+													"variable": [
+														{
+															"key": "code",
+															"value": "<string>",
+															"description": "(Required) "
+														}
+													]
+												}
+											},
+											"response": [
+												{
+													"name": "GetToolPriceDetails",
+													"originalRequest": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/v1/tool/:code",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"v1",
+																"tool",
+																":code"
+															],
+															"variable": [
+																{
+																	"key": "code"
+																}
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n  \"code\": \"<string>\",\n  \"daily_charge\": \"<number>\",\n  \"holiday_charge\": \"<boolean>\",\n  \"weekend_charge\": \"<boolean>\"\n}"
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "rentalAgreement",
+									"item": [
+										{
+											"name": "Get all rental agreements",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": "{{baseUrl}}/api/v1/tool/rentalAgreement"
+											},
+											"response": [
+												{
+													"name": "GetAllAgreements",
+													"originalRequest": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": "{{baseUrl}}/api/v1/tool/rentalAgreement"
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "[\n  {\n    \"checkout_date\": \"<string>\",\n    \"tool_code\": \"<string>\",\n    \"tool_type\": \"<string>\",\n    \"tool_brand\": \"<string>\",\n    \"rental_days\": \"<string>\",\n    \"due_date\": \"<string>\",\n    \"daily_charge\": \"<number>\",\n    \"charge_days\": \"<number>\",\n    \"pre_discount_charge\": \"<number>\",\n    \"discount_percent\": \"<string>\",\n    \"discount_amount\": \"<number>\",\n    \"final_charge\": \"<number>\"\n  },\n  {\n    \"checkout_date\": \"<string>\",\n    \"tool_code\": \"<string>\",\n    \"tool_type\": \"<string>\",\n    \"tool_brand\": \"<string>\",\n    \"rental_days\": \"<string>\",\n    \"due_date\": \"<string>\",\n    \"daily_charge\": \"<number>\",\n    \"charge_days\": \"<number>\",\n    \"pre_discount_charge\": \"<number>\",\n    \"discount_percent\": \"<string>\",\n    \"discount_amount\": \"<number>\",\n    \"final_charge\": \"<number>\"\n  }\n]"
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "Get tools available for rent",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": "{{baseUrl}}/api/v1/tool"
+									},
+									"response": [
+										{
+											"name": "GetAllTools",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": "{{baseUrl}}/api/v1/tool"
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"brand\": \"<string>\",\n    \"code\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"brand\": \"<string>\",\n    \"code\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000"
+		}
+	]
+}
