@@ -93,26 +93,6 @@ public class AbstractController implements ApiApi {
     }
 
     /**
-     * Get the inventory per tool.
-     * @param code
-     * @return
-     */
-    public ResponseEntity<Inventory> getApiV1ToolInventory(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("code") String code
-    ) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Inventory>(objectMapper.readValue("{\n  \"max_available\" : 0.8008281904610115,\n  \"current_count\" : 6.027456183070403,\n  \"tool_code\" : \"tool_code\"\n}", Inventory.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Inventory>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<Inventory>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    /**
      * Checks out a tool for rental and creates a new rental agreement
      * @param code the codeof the tool to check out
      * @param body The rental request details

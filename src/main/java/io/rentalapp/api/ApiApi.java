@@ -46,17 +46,6 @@ public interface ApiApi {
     ResponseEntity<ToolPricingDetails> getApiV1ToolCode(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("code") String code
 );
 
-
-    @Operation(summary = "Get Inventory details", description = "", tags={ "Tool" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Inventory.class))) })
-    @RequestMapping(value = "/api/v1/tool/{code}/inventory",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<Inventory> getApiV1ToolInventory(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("code") String code
-);
-
-
     @Operation(summary = "Create a rental agreement", description = "", tags={ "Tool" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RentalAgreement.class))) })
