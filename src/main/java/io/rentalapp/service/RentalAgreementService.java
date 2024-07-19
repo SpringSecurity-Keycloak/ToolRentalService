@@ -1,6 +1,7 @@
 package io.rentalapp.service;
 
 import io.rentalapp.api.model.Tool;
+import io.rentalapp.api.model.ToolPricingDetails;
 import io.rentalapp.common.*;
 import io.rentalapp.api.model.RentalAgreement;
 import io.rentalapp.api.model.RentalRequest;
@@ -217,6 +218,25 @@ public class RentalAgreementService implements IRentalAgreementService {
         });
 
         return allRentalAgreements;
+    }
+
+    /**
+     * Find Pricing Details for a tool
+     *
+     * @param code
+     * @return
+     */
+    @Override
+    public ToolPricingDetails findPricingDetailsForTool(String toolType) {
+        ToolRentalPriceEntity toolRentalPriceEntity = toolRentalPriceRepositorty.findByCode(toolType);
+
+        ToolPricingDetails pricingDetails = new ToolPricingDetails();
+        pricingDetails.setCode(toolRentalPriceEntity.getToolType());
+        pricingDetails.setDailyCharge(toolRentalPriceEntity.getDailyCharge());
+        pricingDetails.setHolidayCharge(toolRentalPriceEntity.isHolidayChargeable());
+        pricingDetails.setWeekendCharge(toolRentalPriceEntity.isWeekEndChargeable());
+
+        return pricingDetails;
     }
 
     /**

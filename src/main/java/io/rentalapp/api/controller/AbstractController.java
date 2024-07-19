@@ -82,8 +82,10 @@ public class AbstractController implements ApiApi {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<ToolPricingDetails>(objectMapper.readValue("{\n  \"code\" : \"code\",\n  \"daily_charge\" : 0.8008281904610115,\n  \"holiday_charge\" : true,\n  \"weekend_charge\" : true\n}", ToolPricingDetails.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
+                ToolPricingDetails pricingDetails = rentalAgreementService.findPricingDetailsForTool(code);
+                ResponseEntity<ToolPricingDetails> response = ResponseEntity.ok(pricingDetails);
+                return response;
+            } catch (Exception e) {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<ToolPricingDetails>(HttpStatus.INTERNAL_SERVER_ERROR);
             }

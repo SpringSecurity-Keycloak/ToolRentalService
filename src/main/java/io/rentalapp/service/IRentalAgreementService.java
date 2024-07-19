@@ -3,6 +3,7 @@ package io.rentalapp.service;
 import io.rentalapp.api.model.RentalAgreement;
 import io.rentalapp.api.model.RentalRequest;
 import io.rentalapp.api.model.Tool;
+import io.rentalapp.api.model.ToolPricingDetails;
 
 import java.util.List;
 
@@ -26,4 +27,11 @@ public interface IRentalAgreementService {
      * @return List of all rental agreements
      */
     List<RentalAgreement> findAllRentalAgreements();
+
+    /**
+     * Find Pricing Details for a tool
+     * @param code
+     * @return
+     */
+    ToolPricingDetails findPricingDetailsForTool(String code);
 }
