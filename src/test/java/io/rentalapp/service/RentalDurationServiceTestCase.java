@@ -1,8 +1,8 @@
 package io.rentalapp.service;
 
-import io.rentalapp.api.model.RentalAgreement;
 import io.rentalapp.api.model.RentalRequest;
-import io.rentalapp.common.DecimalNumber;
+import io.rentalapp.common.DataFormat;
+import io.rentalapp.common.DateRangeDetails;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,132 +30,143 @@ public class RentalDurationServiceTestCase {
     @Test
     @Transactional
     public void checkoutOnWeekday() {
-        RentalRequest rentalRequest = this.createTestFixture(0, "01/01/2024",4,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("01/04/2024",rentalAgreement.getDueDate());
-        assertEquals(4,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
-
-    }
-
-    @Test
-    @Transactional
-    public void checkoutOnWeekdayWithDiscount() {
-        RentalRequest rentalRequest = this.createTestFixture(10, "01/01/2024",4,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("01/04/2024",rentalAgreement.getDueDate());
-        assertEquals(4,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(7.16),rentalAgreement.getFinalCharge());
+        RentalDurationService rentalDuration = new RentalDurationService();
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("01/01/2024"),4);
+        LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
+        LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
+        assertEquals(DataFormat.toLocalDate("01/01/2024"),checkoutDate);
+        assertEquals(DataFormat.toLocalDate("01/04/2024"),dueDate);
+        assertEquals(0,dateRangeDetails.getTotalHolidays().intValue());
+        assertEquals(0,dateRangeDetails.getTotalWeekendDays().intValue());
+        assertEquals(4,dateRangeDetails.getTotalWeekDays().intValue());
 
     }
 
     @Test
     @Transactional
     public void checkoutOnWeekend() {
-        RentalRequest rentalRequest = this.createTestFixture(0, "01/03/2024",4,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("01/06/2024",rentalAgreement.getDueDate());
-        assertEquals(4,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
+        RentalDurationService rentalDuration = new RentalDurationService();
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("01/03/2024"),4);
+        LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
+        LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
+        assertEquals(DataFormat.toLocalDate("01/03/2024"),checkoutDate);
+        assertEquals(DataFormat.toLocalDate("01/06/2024"),dueDate);
+        assertEquals(0,dateRangeDetails.getTotalHolidays().intValue());
+        assertEquals(1,dateRangeDetails.getTotalWeekendDays().intValue());
+        assertEquals(3,dateRangeDetails.getTotalWeekDays().intValue());
 
     }
 
     @Test
     @Transactional
     public void checkoutOn4JulyWeek() {
-        RentalRequest rentalRequest = this.createTestFixture(0, "07/01/2024",4,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("07/04/2024",rentalAgreement.getDueDate());
-        assertEquals(3,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
-
-    }
-
-    @Test
-    @Transactional
-    public void checkout4JulyWeek() {
-        RentalRequest rentalRequest = this.createTestFixture(0, "07/01/2024",4,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("07/04/2024",rentalAgreement.getDueDate());
-        assertEquals(3,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
+        RentalDurationService rentalDuration = new RentalDurationService();
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("07/01/2024"),4);
+        LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
+        LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
+        assertEquals(DataFormat.toLocalDate("07/01/2024"),checkoutDate);
+        assertEquals(DataFormat.toLocalDate("07/04/2024"),dueDate);
+        assertEquals(1,dateRangeDetails.getTotalHolidays().intValue());
+        assertEquals(0,dateRangeDetails.getTotalWeekendDays().intValue());
+        assertEquals(3,dateRangeDetails.getTotalWeekDays().intValue());
 
     }
 
     @Test
     @Transactional
     public void checkout4JulyFallsOnWeekend_1() {
-        RentalRequest rentalRequest = this.createTestFixture(0, "07/01/2021",4,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("07/04/2021",rentalAgreement.getDueDate());
-        assertEquals(4,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
+
+        RentalDurationService rentalDuration = new RentalDurationService();
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("07/01/2021"),4);
+        LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
+        LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
+        assertEquals(DataFormat.toLocalDate("07/01/2021"),checkoutDate);
+        assertEquals(DataFormat.toLocalDate("07/04/2021"),dueDate);
+        assertEquals(0,dateRangeDetails.getTotalHolidays().intValue());
+        assertEquals(2,dateRangeDetails.getTotalWeekendDays().intValue());
+        assertEquals(2,dateRangeDetails.getTotalWeekDays().intValue());
 
     }
 
     @Test
     @Transactional
     public void checkout4JulyFallsOnWeekend_2() {
-        RentalRequest rentalRequest = this.createTestFixture(0, "07/01/2021",5,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("07/05/2021",rentalAgreement.getDueDate());
-        assertEquals(4,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
+
+        RentalDurationService rentalDuration = new RentalDurationService();
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("07/01/2021"),5);
+        LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
+        LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
+        assertEquals(DataFormat.toLocalDate("07/01/2021"),checkoutDate);
+        assertEquals(DataFormat.toLocalDate("07/05/2021"),dueDate);
+        assertEquals(1,dateRangeDetails.getTotalHolidays().intValue());
+        assertEquals(2,dateRangeDetails.getTotalWeekendDays().intValue());
+        assertEquals(2,dateRangeDetails.getTotalWeekDays().intValue());
 
     }
 
     @Test
     @Transactional
     public void checkout4JulyFallsOnWeekend_3() {
-        RentalRequest rentalRequest = this.createTestFixture(0, "07/01/2020",4,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("07/04/2020",rentalAgreement.getDueDate());
-        assertEquals(3,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
+
+        RentalDurationService rentalDuration = new RentalDurationService();
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("07/01/2020"),4);
+        LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
+        LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
+        assertEquals(DataFormat.toLocalDate("07/01/2020"),checkoutDate);
+        assertEquals(DataFormat.toLocalDate("07/04/2020"),dueDate);
+        assertEquals(1,dateRangeDetails.getTotalHolidays().intValue());
+        assertEquals(1,dateRangeDetails.getTotalWeekendDays().intValue());
+        assertEquals(2,dateRangeDetails.getTotalWeekDays().intValue());
 
     }
 
     @Test
     @Transactional
     public void checkoutJulyFallsOnWeekend_4() {
-        RentalRequest rentalRequest = this.createTestFixture(0, "07/01/2020",6,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("07/06/2020",rentalAgreement.getDueDate());
-        assertEquals(5,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
+
+        RentalDurationService rentalDuration = new RentalDurationService();
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("07/01/2020"),6);
+        LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
+        LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
+        assertEquals(DataFormat.toLocalDate("07/01/2020"),checkoutDate);
+        assertEquals(DataFormat.toLocalDate("07/06/2020"),dueDate);
+        assertEquals(1,dateRangeDetails.getTotalHolidays().intValue());
+        assertEquals(2,dateRangeDetails.getTotalWeekendDays().intValue());
+        assertEquals(3,dateRangeDetails.getTotalWeekDays().intValue());
 
     }
 
     @Test
     @Transactional
     public void checkoutAfterLaborDay() {
-        RentalRequest rentalRequest = this.createTestFixture(0, "08/28/2024",7,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("09/03/2024",rentalAgreement.getDueDate());
-        assertEquals(6,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
+
+        RentalDurationService rentalDuration = new RentalDurationService();
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("08/28/2024"),6);
+        LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
+        LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
+        assertEquals(DataFormat.toLocalDate("08/28/2024"),checkoutDate);
+        assertEquals(DataFormat.toLocalDate("09/02/2024"),dueDate);
+        assertEquals(1,dateRangeDetails.getTotalHolidays().intValue());
+        assertEquals(2,dateRangeDetails.getTotalWeekendDays().intValue());
+        assertEquals(3,dateRangeDetails.getTotalWeekDays().intValue());
 
     }
 
-    @Test
-    @Transactional
-    public void checkoutDueOnLaborDay() {
-        RentalRequest rentalRequest = this.createTestFixture(0, "08/28/2024",6,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("09/02/2024",rentalAgreement.getDueDate());
-        assertEquals(5,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
 
-    }
 
     @Test
     @Transactional
     public void checkoutOnLaborDay() {
-        RentalRequest rentalRequest = this.createTestFixture(0, "09/02/2024",8,"LADW");
-        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
-        assertEquals("09/09/2024",rentalAgreement.getDueDate());
-        assertEquals(7,rentalAgreement.getChargeDays().intValue());
-        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
+        RentalDurationService rentalDuration = new RentalDurationService();
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("09/02/2024"),8);
+        LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
+        LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
+        assertEquals(DataFormat.toLocalDate("09/02/2024"),checkoutDate);
+        assertEquals(DataFormat.toLocalDate("09/09/2024"),dueDate);
+        assertEquals(1,dateRangeDetails.getTotalHolidays().intValue());
+        assertEquals(2,dateRangeDetails.getTotalWeekendDays().intValue());
+        assertEquals(5,dateRangeDetails.getTotalWeekDays().intValue());
+
 
     }
     /**
@@ -171,5 +184,23 @@ public class RentalDurationServiceTestCase {
         rentalRequest.setRentailDaysCount(rentalDays);
         rentalRequest.setToolCode(toolCode);
         return rentalRequest;
+    }
+
+    /**
+     *
+     * @param dateRange
+     * @return
+     */
+    private static LocalDate getFirst(List<LocalDate> dateRange) {
+        return dateRange.get(0);
+    }
+
+    /**
+     *
+     * @param dateRange
+     * @return
+     */
+    private static LocalDate getLast(List<LocalDate> dateRange) {
+        return dateRange.get(dateRange.size()-1);
     }
 }
