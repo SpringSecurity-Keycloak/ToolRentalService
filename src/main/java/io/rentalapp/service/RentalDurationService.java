@@ -69,7 +69,7 @@ public class RentalDurationService {
                      * Update holiday count
                      */
                     int totalHolidays = rentalPeriod.getTotalHolidays();
-                    if (isWeekdayHoliday(currentDate) || isHolidayWeekend(currentDate, startDate, endDate)) {
+                    if (isWeekdayHoliday(currentDate) || adjustForHolidayWeekend(currentDate, startDate, endDate)) {
                         rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
 
@@ -97,16 +97,16 @@ public class RentalDurationService {
      * @param endDate
      * @return
      */
-    private boolean isHolidayWeekend(LocalDate currentDate, LocalDate startDate, LocalDate endDate) {
-        boolean holidayFallsOnWeekend = false;
+    private boolean adjustForHolidayWeekend(LocalDate currentDate, LocalDate startDate, LocalDate endDate) {
+        boolean adjustedForWeekend = false;
         if (observedHoliday.isWeekend(currentDate)) {
-            LocalDate adjustedObservedHoliday = observedHoliday.getActualDate(currentDate);
+            LocalDate adjustedObservedHoliday = observedHoliday.getAdjustedDate(currentDate);
             if (isBetween(adjustedObservedHoliday, startDate, endDate)) {
-                holidayFallsOnWeekend = true;
+                adjustedForWeekend = true;
             }
         }
 
-        return holidayFallsOnWeekend;
+        return adjustedForWeekend;
     }
 
     /**

@@ -16,7 +16,7 @@ public class Weekend implements IHoliday{
      */
     @Override
     public boolean isHoliday(LocalDate date) {
-        return weekend.contains(date.getDayOfWeek());
+        return isWeekend(date);
     }
 
     /**
@@ -27,7 +27,7 @@ public class Weekend implements IHoliday{
      */
     @Override
     public boolean isWeekend(LocalDate date) {
-        return isHoliday(date);
+        return weekend.contains(date.getDayOfWeek());
     }
 
     /**
@@ -40,7 +40,7 @@ public class Weekend implements IHoliday{
      */
     @Override
     public boolean isWeekday(LocalDate date) {
-        return isHoliday(date);
+        return isWeekend(date);
     }
 
 }

@@ -46,4 +46,5 @@ public class LaborDay implements  IHoliday{
     public boolean isWeekday(LocalDate date) {
         return isHoliday(date) && !weekend.isWeekend(date);
     }
+
 }

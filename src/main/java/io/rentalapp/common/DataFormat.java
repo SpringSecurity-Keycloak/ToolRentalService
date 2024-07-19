@@ -5,34 +5,30 @@ import io.rentalapp.api.model.Tool;
 import io.rentalapp.persist.entity.RentalAgreementEntity;
 import io.rentalapp.persist.entity.ToolEntity;
 
+import javax.swing.text.DateFormatter;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
 public class DataFormat {
 
-    private static SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+    private static DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     /**
      * Convert the passed in String into a date. Throws a ValidationException if the string is not in
      * the expected format: "MM-dd-yyyy
-     * @param date
+     * @param dateStr
      * @return
      */
-    public static Date parseDate(String date)  {
+    public static Date parseDate(String dateStr)  {
 
-        Date result = null;
-        try {
-            formatter.setLenient(false);
-            result = formatter.parse(date);
-        } catch (ParseException e) {
-            throw new ValidationException("Expected date format is MM/dd/YYYY. for e.g 12/31/2024");
-        }
-        return result;
+        LocalDate date = toLocalDate(dateStr);
+        return toDate(date);
     }
 
     /**
@@ -41,7 +37,8 @@ public class DataFormat {
      * @return
      */
     public static String toDateString(Date date) {
-        return formatter.format(date);
+        LocalDate localDate = toLocalDate(date);
+        return localDate.format(format);
     }
 
     /**
@@ -95,5 +92,23 @@ public class DataFormat {
         tool.setCode(toolEntity.getCode());
         tool.type(toolEntity.getType());
         return tool;
+    }
+
+    /**
+     *
+     * @param date
+     * @return
+     */
+    public static LocalDate toLocalDate(String date) {
+        return LocalDate.parse(date, format);
+    }
+
+    /**
+     *
+     * @param date
+     * @return
+     */
+    public static LocalDate toLocalDate(Date date) {
+        return  date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 }

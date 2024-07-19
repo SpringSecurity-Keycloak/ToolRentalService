@@ -46,11 +46,11 @@ public class ObservedHoliday implements IHoliday{
     }
 
     /**
-     *
+     * Get the adjusted date if the holiday falls on a weekend
      * @param currentDate
      * @return
      */
-    public LocalDate getActualDate(LocalDate currentDate) {
+    public LocalDate getAdjustedDate(LocalDate currentDate) {
         LocalDate adjustedDate = LocalDate.from(currentDate);
 
         adjustedDate = isObservedOnNextWeekDay(currentDate) ? adjustedDate.plusDays(1) : adjustedDate;
