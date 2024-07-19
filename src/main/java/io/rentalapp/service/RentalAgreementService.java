@@ -223,7 +223,7 @@ public class RentalAgreementService implements IRentalAgreementService {
     /**
      * Find Pricing Details for a tool
      *
-     * @param code
+     * @param toolType
      * @return
      */
     @Override
