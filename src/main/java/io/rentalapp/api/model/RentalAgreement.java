@@ -3,12 +3,13 @@ package io.rentalapp.api.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.rentalapp.common.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.annotation.processing.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -16,11 +17,30 @@ import java.util.Objects;
  * RentalAgreement
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
+@Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
 
 @AllArgsConstructor
 @NoArgsConstructor
 public class RentalAgreement  extends BaseEntity {
+
+  /*
+   * RentalAgreement template for a formatted print to console
+   */
+  private String rentalAgreementPrintTemplate = """
+      
+      Tool code : %s
+      Tool type : %s
+      Tool brand : %s
+      Rental days : %s
+      Check out date : %s
+      Due date : %s
+      Daily rental charge : %s
+      Charge days : %s
+      Pre-discount charge : %s.
+      Discount percent : %s%%
+      Discount amount : %s
+      Final charge : %s
+  """;
 
   @JsonProperty("tool_code")
   private String toolCode = null;
@@ -322,6 +342,25 @@ public class RentalAgreement  extends BaseEntity {
     sb.append("    finalCharge: ").append(toIndentedString(finalCharge)).append("\n");
     sb.append("}");
     return sb.toString();
+  }
+
+  /**
+   * Print the Rental Agreement to the console
+   * @return
+   */
+  public void print() {
+    log.info(rentalAgreementPrintTemplate.formatted(this.toolCode,
+            this.toolType,
+            this.toolBrand,
+            this.rentalDays,
+            this.checkoutDate,
+            this.dueDate,
+            this.dailyCharge,
+            this.chargeDays,
+            this.preDiscountCharge,
+            this.discountPercent,
+            this.discountAmount,
+            this.finalCharge));
   }
 
   /**

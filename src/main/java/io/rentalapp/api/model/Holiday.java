@@ -2,16 +2,17 @@ package io.rentalapp.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
+import javax.annotation.processing.Generated;
 import java.util.Objects;
 
 /**
  * Holiday
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
+@Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
 
 
 public class Holiday   {

@@ -3,14 +3,13 @@ package io.rentalapp.service;
 import io.rentalapp.api.model.RentalAgreement;
 import io.rentalapp.api.model.RentalRequest;
 import io.rentalapp.common.DecimalNumber;
+import jakarta.transaction.Transactional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.transaction.Transactional;
 
 import static org.junit.Assert.assertEquals;
 
@@ -117,5 +116,14 @@ public class RentalAgreementServiceCHNSTestCase {
         rentalRequest.setRentailDaysCount(rentalDays);
         rentalRequest.setToolCode(toolCode);
         return rentalRequest;
+    }
+
+    @Test
+    @Transactional
+    public void checkoutChainsaw4JulyFallsOnWeekend_print() {
+        RentalRequest rentalRequest = this.createTestFixture(0, "07/01/2021",5,"CHNS");
+        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
+        rentalAgreement.print();
+
     }
 }

@@ -1,14 +1,14 @@
 package io.rentalapp.persist.entity;
 
 import io.rentalapp.common.BaseEntity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.Date;
 
 @Data
@@ -21,6 +21,7 @@ public class RentalRequestEntity extends BaseEntity {
 
     private String toolCode = null;
 
+    @Min(value = 1,message = "Rental days should be a minimum of 1 day")
     private Integer rentalDaysCount = null;
 
     @Max(value=100,message = "Discount percent is not in the range 0-100")

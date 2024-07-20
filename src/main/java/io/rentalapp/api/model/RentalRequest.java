@@ -3,34 +3,40 @@ package io.rentalapp.api.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.rentalapp.common.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.annotation.processing.Generated;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.Objects;
 
 /**
  * RentalRequest
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
+@Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
 
 
 @AllArgsConstructor
 @NoArgsConstructor
 public class RentalRequest   extends BaseEntity {
 
+  @NotNull(message = "Tool Code is required")
   @JsonProperty("tool_code")
   private String toolCode = null;
 
+  @Min(value = 1,message = "Rental days should be a minimum of 1 day")
+  @NotNull(message = "Rental Days is required")
   @JsonProperty("rental_days_count")
   private Integer rentailDaysCount = null;
 
   @JsonProperty("discount_percent")
   private Integer discountPercent = null;
 
+  @NotNull(message = "Checkout Date is required")
   @JsonProperty("checkout_date")
   private String checkoutDate = null;
 

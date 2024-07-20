@@ -1,10 +1,12 @@
 package io.rentalapp.api;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletResponse;
+
+import javax.annotation.processing.Generated;
 import java.io.IOException;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
+@Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
 public class ApiOriginFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,

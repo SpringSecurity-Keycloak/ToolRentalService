@@ -1,6 +1,5 @@
 package io.rentalapp.holiday;
 
-import org.apache.tomcat.jni.Local;
 
 import java.time.LocalDate;
 

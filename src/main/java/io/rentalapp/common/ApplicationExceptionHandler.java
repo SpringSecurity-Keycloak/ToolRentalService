@@ -1,10 +1,12 @@
 package io.rentalapp.common;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,15 +29,28 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
      * @param request
      * @return
      */
-    @ExceptionHandler
+    @ExceptionHandler(ValidationException.class)
     protected ResponseEntity<Object> handleConflict(ValidationException ex, WebRequest request) {
         String bodyOfResponse = ex.getMessage();
-        return handleExceptionInternal(ex, bodyOfResponse,
-                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return new ResponseEntity(bodyOfResponse,HttpStatus.BAD_REQUEST);
     }
 
     /**
-     * Handle all framework related exceptions thrown by the application such as number format exceptions etc
+     * Catch errors thrown by data layer
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    protected ResponseEntity<Object> handleConflict2(ConstraintViolationException ex, WebRequest request) {
+        String bodyOfResponse = ex.getMessage();
+        List<String> errors = new ArrayList<String>();
+        ex.getConstraintViolations().stream().anyMatch(error -> errors.add(error.getMessage()));
+        return new ResponseEntity(String.join(",", errors),HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Catch invalid data type exceptions
      * @param ex
      * @param headers
      * @param status
@@ -43,18 +58,29 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
      * @return
      */
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-        logger.info(ex.getClass().getName());
-        //
-        final List<String> errors = new ArrayList<String>();
-        for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.add(error.getField() + ": " + error.getDefaultMessage());
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        System.out.println((ex));
+        if (ex.getRootCause() instanceof  JsonMappingException) {
+            JsonMappingException error = (JsonMappingException) ex.getRootCause();
+            String fieldName = error.getPath().get(0).getFieldName();
+            return new ResponseEntity("Please enter a valid value for field " + fieldName, HttpStatus.BAD_REQUEST);
         }
-        for (final ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-            errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
+        else {
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
-        return handleExceptionInternal(ex,String.join(", ", errors), headers, HttpStatus.BAD_REQUEST, request);
     }
 
+    /**
+     * Catch javax.validation violations
+     * @param ex
+     * @param headers
+     * @param status
+     * @param request
+     * @return
+     */
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        List<String> errors = new ArrayList<String>();
+        ex.getBindingResult().getFieldErrors().stream().forEach(field -> errors.add(field.getDefaultMessage()));
+        return new ResponseEntity(String.join(",", errors) , HttpStatus.BAD_REQUEST);
+    }
 }

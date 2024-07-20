@@ -100,7 +100,12 @@ public class DataFormat {
      * @return
      */
     public static LocalDate toLocalDate(String date) {
-        return LocalDate.parse(date, format);
+        try {
+            return LocalDate.parse(date, format);
+        }catch (Exception ex) {
+            throw new ValidationException( "Dates should be in format MM/dd/yyyy. for e.g 12/31/2024" );
+        }
+
     }
 
     /**

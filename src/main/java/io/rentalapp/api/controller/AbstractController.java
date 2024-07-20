@@ -2,14 +2,18 @@ package io.rentalapp.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.rentalapp.api.ApiApi;
-import io.rentalapp.api.model.*;
+import io.rentalapp.api.model.RentalAgreement;
+import io.rentalapp.api.model.RentalRequest;
+import io.rentalapp.api.model.Tool;
+import io.rentalapp.api.model.ToolPricingDetails;
 import io.rentalapp.common.ValidationException;
-import io.rentalapp.service.RentalDurationService;
 import io.rentalapp.service.IRentalAgreementService;
+import io.rentalapp.service.RentalDurationService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.apache.commons.lang3.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +23,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
+import javax.annotation.processing.Generated;
 import java.util.List;
 
 /**
  * The REST Controller that implements the OpenApi operations
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
+@Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-07-06T15:29:49.511604531Z[GMT]")
 @RestController
 public class AbstractController implements ApiApi {
 
@@ -106,20 +108,18 @@ public class AbstractController implements ApiApi {
 
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
-
-               if (StringUtils.isAllEmpty(body.getToolCode()) ||
-                       StringUtils.isAllEmpty(body.getCheckoutDate()) ||
-                               body.getRentailDaysCount() == null) {
-                   throw new ValidationException("Tool code, checkoutdate and rental days are required for this request");
-               }
-
                if (body.getDiscountPercent() == null) {
                    body.setDiscountPercent(0);
                 }
 
-                RentalAgreement rentalAgreement  = rentalAgreementService.createRentalAgreement(body);
-                ResponseEntity<RentalAgreement> response = ResponseEntity.ok(rentalAgreement);
-                return response;
+               try {
+                   RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(body);
+                   ResponseEntity<RentalAgreement> response = ResponseEntity.ok(rentalAgreement);
+                   return response;
+               }catch (ValidationException ex) {
+                       throw ex;
+               }
+
 
         }
 
