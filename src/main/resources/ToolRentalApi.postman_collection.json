@@ -38,7 +38,7 @@
 														],
 														"body": {
 															"mode": "raw",
-															"raw": "{\n  \"checkout_date\": \"<string>\",\n  \"rental_days_count\": \"<integer>\",\n  \"tool_code\": \"<string>\",\n  \"discount_percent\": \"<integer>\"\n}",
+															"raw": "{\n  \"checkout_date\": \"100\",\n  \"rental_days_count\": \"100\",\n  \"tool_code\": \"100\",\n  \"discount_percent\": \"100\"\n}",
 															"options": {
 																"raw": {
 																	"headerFamily": "json",
@@ -84,7 +84,7 @@
 																],
 																"body": {
 																	"mode": "raw",
-																	"raw": "{\n  \"checkout_date\": \"<string>\",\n  \"rental_days_count\": \"<integer>\",\n  \"tool_code\": \"<string>\",\n  \"discount_percent\": \"<integer>\"\n}",
+																	"raw": "{\n  \"checkout_date\": \"01/12/2024\",\n  \"rental_days_count\": \"10\",\n  \"tool_code\": \"CHNS\",\n  \"discount_percent\": \"10\"\n}",
 																	"options": {
 																		"raw": {
 																			"headerFamily": "json",

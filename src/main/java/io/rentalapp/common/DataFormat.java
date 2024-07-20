@@ -5,15 +5,11 @@ import io.rentalapp.api.model.Tool;
 import io.rentalapp.persist.entity.RentalAgreementEntity;
 import io.rentalapp.persist.entity.ToolEntity;
 
-import javax.swing.text.DateFormatter;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Locale;
 
 public class DataFormat {
 
@@ -25,8 +21,7 @@ public class DataFormat {
      * @param dateStr
      * @return
      */
-    public static Date parseDate(String dateStr)  {
-
+    public static Date toDate(String dateStr)  {
         LocalDate date = toLocalDate(dateStr);
         return toDate(date);
     }

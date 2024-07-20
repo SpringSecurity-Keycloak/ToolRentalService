@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.util.EnumSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -15,6 +17,12 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ToolRentalPriceEntity extends BaseEntity {
+
+    public enum ToolType {
+        Chainsaw, Ladder, Jackhammer
+    }
+
+    public static Set<ToolType> validToolTypes = EnumSet.allOf(ToolType.class);
 
     private String toolType = null;
 
@@ -27,3 +35,5 @@ public class ToolRentalPriceEntity extends BaseEntity {
     private boolean isHolidayChargeable;
 
 }
+
+

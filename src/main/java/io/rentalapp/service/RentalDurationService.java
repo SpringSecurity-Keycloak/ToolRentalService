@@ -70,6 +70,11 @@ public class RentalDurationService {
                      */
                     int totalHolidays = rentalPeriod.getTotalHolidays();
                     if (isWeekdayHoliday(currentDate) || adjustForHolidayWeekend(currentDate, startDate, endDate)) {
+                        //If an observed holiday falls on a weekday OR
+                        //If it falls a weekend , add it to the total holiday count for the requested period
+                        //
+                        // Note: adjustForHolidayWeekend() includes either the previous Friday or next Monday of the requested period as the holiday
+                        // if the holiday falls on a weekend
                         rentalPeriod.setTotalHolidays(++totalHolidays);
                     }
 

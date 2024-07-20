@@ -31,7 +31,7 @@ public class RentalDurationServiceTestCase {
     @Transactional
     public void checkoutOnWeekday() {
         RentalDurationService rentalDuration = new RentalDurationService();
-        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("01/01/2024"),4);
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.toDate("01/01/2024"),4);
         LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
         LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
         assertEquals(DataFormat.toLocalDate("01/01/2024"),checkoutDate);
@@ -46,7 +46,7 @@ public class RentalDurationServiceTestCase {
     @Transactional
     public void checkoutOnWeekend() {
         RentalDurationService rentalDuration = new RentalDurationService();
-        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("01/03/2024"),4);
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.toDate("01/03/2024"),4);
         LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
         LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
         assertEquals(DataFormat.toLocalDate("01/03/2024"),checkoutDate);
@@ -61,7 +61,7 @@ public class RentalDurationServiceTestCase {
     @Transactional
     public void checkoutOn4JulyWeek() {
         RentalDurationService rentalDuration = new RentalDurationService();
-        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("07/01/2024"),4);
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.toDate("07/01/2024"),4);
         LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
         LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
         assertEquals(DataFormat.toLocalDate("07/01/2024"),checkoutDate);
@@ -77,7 +77,7 @@ public class RentalDurationServiceTestCase {
     public void checkout4JulyFallsOnWeekend_1() {
 
         RentalDurationService rentalDuration = new RentalDurationService();
-        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("07/01/2021"),4);
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.toDate("07/01/2021"),4);
         LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
         LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
         assertEquals(DataFormat.toLocalDate("07/01/2021"),checkoutDate);
@@ -93,7 +93,7 @@ public class RentalDurationServiceTestCase {
     public void checkout4JulyFallsOnWeekend_2() {
 
         RentalDurationService rentalDuration = new RentalDurationService();
-        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("07/01/2021"),5);
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.toDate("07/01/2021"),5);
         LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
         LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
         assertEquals(DataFormat.toLocalDate("07/01/2021"),checkoutDate);
@@ -109,7 +109,7 @@ public class RentalDurationServiceTestCase {
     public void checkout4JulyFallsOnWeekend_3() {
 
         RentalDurationService rentalDuration = new RentalDurationService();
-        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("07/01/2020"),4);
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.toDate("07/01/2020"),4);
         LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
         LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
         assertEquals(DataFormat.toLocalDate("07/01/2020"),checkoutDate);
@@ -125,7 +125,7 @@ public class RentalDurationServiceTestCase {
     public void checkoutJulyFallsOnWeekend_4() {
 
         RentalDurationService rentalDuration = new RentalDurationService();
-        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("07/01/2020"),6);
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.toDate("07/01/2020"),6);
         LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
         LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
         assertEquals(DataFormat.toLocalDate("07/01/2020"),checkoutDate);
@@ -141,7 +141,7 @@ public class RentalDurationServiceTestCase {
     public void checkoutAfterLaborDay() {
 
         RentalDurationService rentalDuration = new RentalDurationService();
-        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("08/28/2024"),6);
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.toDate("08/28/2024"),6);
         LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
         LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
         assertEquals(DataFormat.toLocalDate("08/28/2024"),checkoutDate);
@@ -158,7 +158,7 @@ public class RentalDurationServiceTestCase {
     @Transactional
     public void checkoutOnLaborDay() {
         RentalDurationService rentalDuration = new RentalDurationService();
-        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.parseDate("09/02/2024"),8);
+        DateRangeDetails dateRangeDetails = rentalDuration.calculateDatesForRental(DataFormat.toDate("09/02/2024"),8);
         LocalDate checkoutDate = getFirst(dateRangeDetails.getDateRange());
         LocalDate dueDate = getLast(dateRangeDetails.getDateRange());
         assertEquals(DataFormat.toLocalDate("09/02/2024"),checkoutDate);

@@ -36,7 +36,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     }
 
     /**
-     * Catch errors thrown by data layer
+     * Catch entity class field level validation errors
      * @param ex
      * @param request
      * @return
@@ -50,7 +50,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     }
 
     /**
-     * Catch invalid data type exceptions
+     * Catch incompatible data conversion errors
      * @param ex
      * @param headers
      * @param status
@@ -58,8 +58,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
      * @return
      */
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        System.out.println((ex));
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatusCode status,
+                                                                  WebRequest request) {
         if (ex.getRootCause() instanceof  JsonMappingException) {
             JsonMappingException error = (JsonMappingException) ex.getRootCause();
             String fieldName = error.getPath().get(0).getFieldName();
@@ -71,16 +73,32 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     }
 
     /**
-     * Catch javax.validation violations
+     * Catch model class field level validation errors
      * @param ex
      * @param headers
      * @param status
      * @param request
      * @return
      */
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatusCode status,
+                                                                  WebRequest request) {
         List<String> errors = new ArrayList<String>();
         ex.getBindingResult().getFieldErrors().stream().forEach(field -> errors.add(field.getDefaultMessage()));
         return new ResponseEntity(String.join(",", errors) , HttpStatus.BAD_REQUEST);
     }
+
+    /**
+     * Catch All Runtime exceptions
+     * @param ex RuntimeException
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(RuntimeException.class)
+    protected ResponseEntity<Object> handleConflict(Exception ex, WebRequest request) {
+        String bodyOfResponse = ex.getMessage();
+        return new ResponseEntity(bodyOfResponse,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }

@@ -58,7 +58,7 @@ public class RentalAgreementService implements IRentalAgreementService {
             throw new ValidationException("Invalid Tool Code Entered");
         }
 
-        Date checkoutDate = DataFormat.parseDate(rentalRequest.getCheckoutDate());
+        Date checkoutDate = DataFormat.toDate(rentalRequest.getCheckoutDate());
 
         /*
          * Determine number of weekdays and holidays in the requested rental period
@@ -76,11 +76,6 @@ public class RentalAgreementService implements IRentalAgreementService {
         }
 
         /*
-         * Get pricing rules for requested tool
-         */
-        ToolRentalPriceEntity rentalPrice = getRentalPriceForTool(availableTools.get(rentalRequest.getToolCode()).getType());
-
-        /*
          * Save the rental request
          */
         RentalRequestEntity rentRequest = rentalRequestRepository
@@ -90,6 +85,11 @@ public class RentalAgreementService implements IRentalAgreementService {
                         .discountPercent(rentalRequest.getDiscountPercent())
                         .checkoutDate(checkoutDate)
                         .build());
+
+        /*
+         * Get pricing rules for requested tool
+         */
+        ToolRentalPriceEntity rentalPrice = getRentalPriceForTool(availableTools.get(rentalRequest.getToolCode()).getType());
 
         /*
          * Calculate the pricing based on the days requested and the pricing rules
@@ -231,6 +231,15 @@ public class RentalAgreementService implements IRentalAgreementService {
      */
     @Override
     public ToolPricingDetails findPricingDetailsForTool(String toolType) {
+        boolean isValidToolType =ToolRentalPriceEntity
+                .validToolTypes
+                .stream()
+                .anyMatch(aToolType-> aToolType.name().equals(toolType));
+
+        if(!isValidToolType) {
+            throw new ValidationException("Please use a valid tool type code. Valid values are "+ToolRentalPriceEntity.validToolTypes);
+        }
+
         ToolRentalPriceEntity toolRentalPriceEntity = toolRentalPriceRepositorty.findByCode(toolType);
 
         ToolPricingDetails pricingDetails = new ToolPricingDetails();
