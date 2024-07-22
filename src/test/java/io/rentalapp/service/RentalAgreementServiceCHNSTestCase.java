@@ -100,6 +100,26 @@ public class RentalAgreementServiceCHNSTestCase {
 
     }
 
+    @Test
+    @Transactional
+    public void checkoutChainsaw4JulyFallsOnWeekend_4() {
+        RentalRequest rentalRequest = this.createTestFixture(0, "07/04/2024",1,"CHNS");
+        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
+        assertEquals("07/04/2024",rentalAgreement.getDueDate());
+        assertEquals(1,rentalAgreement.getChargeDays().intValue());
+        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
+    }
+
+    @Test
+    @Transactional
+    public void checkoutChainsaw4JulyFallsOnWeekend_5() {
+        RentalRequest rentalRequest = this.createTestFixture(0, "07/04/2020",1,"CHNS");
+        RentalAgreement rentalAgreement = rentalAgreementService.createRentalAgreement(rentalRequest);
+        assertEquals("07/04/2020",rentalAgreement.getDueDate());
+        assertEquals(0,rentalAgreement.getChargeDays().intValue());
+        assertEquals(DecimalNumber.valueOf(price*rentalAgreement.getChargeDays().intValue()),rentalAgreement.getFinalCharge());
+    }
+
 
     /**
      * Helper method to create test data
