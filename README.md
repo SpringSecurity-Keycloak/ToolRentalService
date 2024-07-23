@@ -20,7 +20,7 @@ The underlying library integrating swagger to SpringBoot is [springdoc-openapi](
 
 ## Build Dependencies
 The service is built using
-- JDK 22
+- JDK 15
 - Spring Boot 3.0.1
 - Open API 3.0
 

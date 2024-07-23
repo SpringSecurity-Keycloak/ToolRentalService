@@ -40,6 +40,17 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0</version>
+            <configuration>
+                <includes>
+                    <include>**/TestCase.java</include>
+                </includes>
+            </configuration>
+        </plugin>
+
         </plugins>
     </build>
 
@@ -111,8 +122,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 
