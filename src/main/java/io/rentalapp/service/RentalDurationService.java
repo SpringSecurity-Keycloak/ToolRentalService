@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,9 +25,8 @@ public class RentalDurationService {
      * @return
      */
     public static List<LocalDate> getDateRange(RentalAgreementEntity rentalAgreement) {
-        LocalDate startDate = rentalAgreement.getCheckoutDate().toInstant().atZone(ZoneId.of("America/Chicago")).toLocalDate();
-        LocalDate endDate = rentalAgreement.getDueDate().toInstant().atZone(ZoneId.of("America/Chicago")).toLocalDate();
-
+        LocalDate startDate = DataFormat.toLocalDate(rentalAgreement.getCheckoutDate());
+        LocalDate endDate = DataFormat.toLocalDate(rentalAgreement.getDueDate());
         return startDate.datesUntil(endDate).collect(Collectors.toList());
     }
 
@@ -47,41 +45,18 @@ public class RentalDurationService {
      */
     public DateRangeDetails calculateDatesForRental(Date checkoutDate, int checkoutDays) {
 
-        LocalDate startDate = checkoutDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate startDate = DataFormat.toLocalDate(checkoutDate);
         LocalDate endDate = LocalDate.from(startDate).plusDays(checkoutDays);
-        DateRangeDetails rentalPeriod = new DateRangeDetails();
 
-        startDate.datesUntil(endDate)
-                .forEach(currentDate -> {
+        DateRangeDetails rentalPeriod = startDate.datesUntil(endDate)
+                .collect(() -> new DateRangeDetails(startDate,endDate)
+                        , DateRangeDetails::accept
+                        , DateRangeDetails::combine);
 
-                    rentalPeriod.getDateRange().add(currentDate);
-                    rentalPeriod.setDueDate(DataFormat.toDate(currentDate));
-
-                    /**
-                     * Update weekend count
-                     */
-                    if (weekendCheck.isWeekend(currentDate)) {
-                        int totalWeekendDays = rentalPeriod.getTotalWeekendDays();
-                        rentalPeriod.setTotalWeekendDays(++totalWeekendDays);
-                    }
-
-                    /**
-                     * Update holiday count
-                     */
-                    int totalHolidays = rentalPeriod.getTotalHolidays();
-                    if (isWeekdayHoliday(currentDate) || adjustForHolidayWeekend(currentDate, startDate, endDate)) {
-                        //If an observed holiday falls on a weekday OR
-                        //If it falls a weekend , add it to the total holiday count for the requested period
-                        //
-                        // Note: adjustForHolidayWeekend() includes either the previous Friday or next Monday of the requested period as the holiday
-                        // if the holiday falls on a weekend
-                        rentalPeriod.setTotalHolidays(++totalHolidays);
-                    }
-
-                });
-
-        int totalWeekDays = rentalPeriod.getDateRange().size() - (rentalPeriod.getTotalWeekendDays() + rentalPeriod.getTotalHolidays());
+        int totalWeekDays = rentalPeriod.getDateRange().size()
+                - (rentalPeriod.getTotalWeekendDays() + rentalPeriod.getTotalHolidays());
         rentalPeriod.setTotalWeekDays(totalWeekDays);
+        rentalPeriod.setDueDate(DataFormat.toDate(endDate.minusDays(1)));
 
         return rentalPeriod;
     }
