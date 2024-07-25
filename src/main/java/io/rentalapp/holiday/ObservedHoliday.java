@@ -1,7 +1,10 @@
 package io.rentalapp.holiday;
 
+import io.rentalapp.common.ValidationException;
+
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public class ObservedHoliday implements IHoliday{
     private static final List<IHoliday> observedHolidays = List.of(
@@ -77,6 +80,5 @@ public class ObservedHoliday implements IHoliday{
         LocalDate nextDay = currentDate.plusDays(1);
         return isWeekend(currentDate) && !weekendCheck.isWeekday(nextDay) ;
     }
-
 
 }

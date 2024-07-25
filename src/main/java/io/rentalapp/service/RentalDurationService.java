@@ -53,11 +53,7 @@ public class RentalDurationService {
                         , DateRangeDetails::accept
                         , DateRangeDetails::combine);
 
-        int totalWeekDays = rentalPeriod.getDateRange().size()
-                - (rentalPeriod.getTotalWeekendDays() + rentalPeriod.getTotalHolidays());
-        rentalPeriod.setTotalWeekDays(totalWeekDays);
         rentalPeriod.setDueDate(DataFormat.toDate(endDate.minusDays(1)));
-
         return rentalPeriod;
     }
 

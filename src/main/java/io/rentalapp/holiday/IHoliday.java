@@ -27,4 +27,16 @@ public interface IHoliday {
      * @return
      */
     boolean isWeekday(LocalDate date);
+
+    /**
+     *
+     * @param adjustedObservedHoliday
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    default  boolean isBetween(LocalDate adjustedObservedHoliday, LocalDate startDate, LocalDate endDate) {
+        return !adjustedObservedHoliday.isBefore(startDate) &&
+                !adjustedObservedHoliday.equals(endDate);
+    }
 }

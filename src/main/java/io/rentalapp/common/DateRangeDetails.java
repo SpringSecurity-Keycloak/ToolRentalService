@@ -57,10 +57,13 @@ public class DateRangeDetails implements Consumer<LocalDate> {
             totalWeekendDays++;
         }
 
-        if (isWeekdayHoliday(rentalDay) || adjustForHolidayWeekend(rentalDay, startDate, endDate)) {
+        if (observedHoliday.isWeekday(rentalDay) || adjustForHolidayWeekend(rentalDay, startDate, endDate)) {
             //it's a holiday or maybe a holiday that falls on a weekend
             totalHolidays++;
         }
+
+        totalWeekDays = dateRange.size() - (totalWeekendDays + totalHolidays);
+
     }
 
     /**
@@ -71,15 +74,7 @@ public class DateRangeDetails implements Consumer<LocalDate> {
         dateRange.addAll(another.getDateRange());
         totalWeekendDays += another.getTotalWeekendDays();
         totalHolidays += another.getTotalHolidays();
-    }
-
-    /**
-     * Does holiday fall on a weekday?
-     * @param currentDate
-     * @return
-     */
-    private boolean isWeekdayHoliday(LocalDate currentDate) {
-        return observedHoliday.isWeekday(currentDate);
+        totalWeekDays += another.getTotalWeekDays();
     }
 
     /**
@@ -90,26 +85,15 @@ public class DateRangeDetails implements Consumer<LocalDate> {
      * @return
      */
     private boolean adjustForHolidayWeekend(LocalDate currentDate, LocalDate startDate, LocalDate endDate) {
-        boolean adjustedForWeekend = false;
+        boolean adjustForWeekend = false;
         if (observedHoliday.isWeekend(currentDate)) {
             LocalDate adjustedObservedHoliday = observedHoliday.getAdjustedDate(currentDate);
-            if (isBetween(adjustedObservedHoliday, startDate, endDate)) {
-                adjustedForWeekend = true;
+            if (observedHoliday.isBetween(adjustedObservedHoliday, startDate, endDate)) {
+                adjustForWeekend = true;
             }
         }
 
-        return adjustedForWeekend;
+        return adjustForWeekend;
     }
 
-    /**
-     *
-     * @param adjustedObservedHoliday
-     * @param startDate
-     * @param endDate
-     * @return
-     */
-    private  boolean isBetween(LocalDate adjustedObservedHoliday, LocalDate startDate, LocalDate endDate) {
-        return !adjustedObservedHoliday.isBefore(startDate) &&
-                !adjustedObservedHoliday.equals(endDate);
-    }
 }
