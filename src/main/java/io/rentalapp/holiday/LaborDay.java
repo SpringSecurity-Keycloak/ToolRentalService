@@ -16,10 +16,10 @@ public class LaborDay implements  IHoliday{
      */
     @Override
     public boolean isHoliday(LocalDate date) {
-        LocalDate laborDay = LocalDate.of(date.getYear(), date.getMonth(), 1)
+        LocalDate laborDay = LocalDate.of(date.getYear(), Month.SEPTEMBER, 1)
                 .with(TemporalAdjusters.dayOfWeekInMonth(1, DayOfWeek.MONDAY));
 
-        boolean isLaborDay = (date.getDayOfYear() == laborDay.getDayOfYear() && date.getMonth() == Month.SEPTEMBER);
+        boolean isLaborDay = (date.getDayOfYear() == laborDay.getDayOfYear());
         return isLaborDay;
     }
 
